@@ -1,0 +1,2750 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Pet Rescue Platform - Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: "Inter", "Segoe UI", -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        min-height: 100vh;
+        color: #333;
+        overflow-x: hidden;
+        position: relative;
+      }
+      
+      body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 50%, rgba(240, 147, 251, 0.1) 100%);
+        z-index: -1;
+      }
+      
+      @media (max-width: 768px) {
+        .container {
+          margin: 20px;
+          padding: 24px;
+        }
+        .dashboard-flex {
+          flex-direction: column;
+        }
+        .sidebar {
+          width: 100%;
+          min-width: 100%;
+          max-width: 100%;
+          margin-bottom: 20px;
+          position: relative;
+        }
+        .nav-link {
+          min-height: 50px;
+          padding: 16px 20px;
+        }
+        .main-content {
+          width: 100%;
+        }
+      }
+      
+      @media (min-width: 769px) {
+        .sidebar {
+          width: 320px;
+          min-width: 320px;
+          max-width: 320px;
+        }
+        .nav-link {
+          min-height: 60px;
+        }
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 30px auto;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.3);
+        padding: 30px;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        min-height: calc(100vh - 100px);
+      }
+      
+      nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        position: sticky;
+        top: 0;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        z-index: 100;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      }
+      
+      nav .brand {
+        font-weight: 700;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 1.5rem;
+        letter-spacing: -0.5px;
+      }
+      
+      nav a {
+        color: #4a5568;
+        text-decoration: none;
+        font-weight: 600;
+        margin: 0 15px;
+        transition: all 0.3s ease;
+        padding: 8px 16px;
+        border-radius: 8px;
+      }
+      
+      nav a:hover {
+        background: rgba(102, 126, 234, 0.1);
+        color: #667eea;
+        transform: translateY(-1px);
+      }
+      
+      h2 {
+        color: #2d3748;
+        margin-bottom: 20px;
+        text-align: center;
+        font-size: 2.2rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        position: sticky;
+        top: 60px;
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(20px);
+        padding: 10px 0;
+        z-index: 99;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      }
+      
+      .dashboard-flex {
+        display: flex;
+        gap: 30px;
+        min-height: calc(100vh - 250px);
+      }
+      
+      .sidebar {
+        width: 280px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        padding: 24px;
+        position: sticky;
+        top: 100px;
+        height: fit-content;
+        max-height: calc(100vh - 160px);
+        overflow-y: auto;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(20px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Profile Section Styles */
+      .profile-section {
+        text-align: center;
+        padding: 20px;
+        margin-bottom: 25px;
+        border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+      }
+
+      .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid rgba(102, 126, 234, 0.3);
+        margin-bottom: 15px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .profile-avatar-placeholder {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0 auto 15px auto;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .profile-section h4 {
+        color: #2d3748;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin: 0 0 5px 0;
+      }
+
+      .profile-section p {
+        color: #718096;
+        font-size: 0.9rem;
+        margin: 0 0 15px 0;
+        text-transform: capitalize;
+      }
+
+      .edit-profile-btn {
+        display: inline-block;
+        padding: 10px 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 25px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      }
+
+      .edit-profile-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        text-decoration: none;
+        color: white;
+      }
+      
+      .sidebar {
+        width: 320px;
+        min-width: 320px;
+        max-width: 320px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        height: fit-content;
+        position: sticky;
+        top: 20px;
+        flex-shrink: 0;
+      }
+      
+      .navigation-menu {
+        margin-top: 10px;
+        width: 100%;
+      }
+      
+      .nav-item {
+        margin-bottom: 8px;
+        width: 100%;
+      }
+      
+      .nav-link {
+        display: block;
+        color: #6b7280;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 20px 20px;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        text-align: left;
+        position: relative;
+        font-size: 15px;
+        line-height: 1.4;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 0;
+        width: 100%;
+        box-sizing: border-box;
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+      }
+      
+      .nav-link:hover {
+        background: rgba(102, 126, 234, 0.05);
+        color: #4f46e5;
+        transform: translateX(2px);
+        border-color: rgba(102, 126, 234, 0.2);
+      }
+      
+      .nav-link.active {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: white !important;
+        transform: translateX(3px);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+        font-weight: 600;
+        border: 1px solid rgba(99, 102, 241, 0.3);
+        min-height: 60px;
+      }
+      
+      .nav-link.active::before {
+        content: '';
+        position: absolute;
+        left: -8px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4px;
+        height: 60%;
+        background: #6366f1;
+        border-radius: 2px;
+      }
+      
+      /* Remove old ul/li styles */
+      .sidebar ul {
+        display: none;
+      }
+      
+      .sidebar li {
+        display: none;
+      }
+      
+      .sidebar a:not(.nav-link) {
+        display: block;
+        color: #4a5568;
+        text-decoration: none;
+        font-weight: 500;
+        padding: 14px 18px;
+        border-radius: 12px;
+        margin-bottom: 4px;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+        position: relative;
+        background: transparent;
+      }
+      
+      .sidebar h3 {
+        color: #2d3748;
+        margin: 0 0 16px 0;
+        font-weight: 600;
+        font-size: 1.1rem;
+        padding-bottom: 8px;
+        border-bottom: 2px solid rgba(45, 55, 72, 0.1);
+      }
+      
+      /* Special styling for profile button when active */
+      #link-profile.active {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+        color: white !important;
+        transform: scale(1.02) !important;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+      }
+      
+      /* Tab Navigation Styling */
+      .tab-nav {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 25px;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 0;
+      }
+      
+      .tab-nav a {
+        text-decoration: none;
+        padding: 12px 20px;
+        border-radius: 8px 8px 0 0;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        position: relative;
+        border: 2px solid transparent;
+        border-bottom: none;
+        background: #f8f9fa;
+        color: #6b7280;
+      }
+      
+      .tab-nav a:hover {
+        background: rgba(99, 102, 241, 0.1);
+        color: #6366f1;
+        transform: translateY(-2px);
+      }
+      
+      .tab-nav a.active {
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        color: white;
+        border-color: #6366f1;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+      }
+      
+      .tab-nav a.active::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      }
+      
+      /* Request Cards Styling */
+      .request-tab-content {
+        background: rgba(248, 249, 250, 0.5);
+        border-radius: 12px;
+        padding: 20px;
+        margin-top: 15px;
+      }
+      
+      .report-item {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #6366f1;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .report-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+        transition: left 0.5s ease;
+      }
+      
+      .report-item:hover::before {
+        left: 100%;
+      }
+      
+      .report-item:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+      }
+      
+      .report-item.lost-report {
+        border-left-color: #ef4444;
+        background: linear-gradient(145deg, #ffffff 0%, #fefefe 100%);
+      }
+      
+      .report-item.lost-report:hover {
+        box-shadow: 0 12px 40px rgba(239, 68, 68, 0.2);
+        border-left-width: 6px;
+      }
+      
+      .report-item.rescue-report {
+        border-left-color: #10b981;
+      }
+      
+      /* Enhanced animations for pet images */
+      .pet-image-container {
+        position: relative;
+        overflow: hidden;
+        border-radius: 18px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      
+      .pet-image-container:hover {
+        transform: scale(1.02);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+      }
+      
+      /* Gradient text effect for pet names */
+      .pet-name-gradient {
+        background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      
+      /* Advanced animations */
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.8;
+          transform: scale(1.05);
+        }
+      }
+      
+      @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {
+          transform: translateY(0);
+        }
+        40% {
+          transform: translateY(-10px);
+        }
+        60% {
+          transform: translateY(-5px);
+        }
+      }
+      
+      @keyframes shimmer {
+        0% {
+          background-position: -1000px 0;
+        }
+        100% {
+          background-position: 1000px 0;
+        }
+      }
+      
+      /* Enhanced card hover effects */
+      .lost-pet-card {
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .lost-pet-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.1), transparent);
+        transition: left 0.6s ease;
+      }
+      
+      .lost-pet-card:hover::before {
+        left: 100%;
+      }
+      
+      .main-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        min-height: calc(100vh - 220px);
+        overflow-y: auto;
+        padding-right: 10px;
+      }
+      
+      .card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        padding: 25px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        transition: all 0.3s ease;
+        height: auto;
+      }
+      
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.15);
+      }
+      
+      .card h4 {
+        color: #2d3748;
+        margin-bottom: 16px;
+        font-weight: 600;
+        font-size: 1.2rem;
+      }
+      
+      .card p {
+        margin-bottom: 12px;
+        color: #4a5568;
+        line-height: 1.6;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <nav>
+        <div class="brand">Pet Rescue Dashboard</div>
+        <div>
+          <a href="{% url 'dashboard' %}">Dashboard</a>
+          <a href="{% url 'logout' %}" style="margin-left: 20px">Logout</a>
+        </div>
+      </nav>
+      <h2>Welcome, {{ user.username }} ({{ user.role }})</h2>
+      {% if user.role == 'admin' %}
+      
+      <!-- Admin Navigation Section -->
+      <div style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); border-radius: 12px; padding: 20px; margin: 20px 0; box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);">
+        <h3 style="color: white; margin: 0 0 15px 0; font-size: 20px; font-weight: 700;">🛠️ Admin Control Panel</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+          <a href="{% url 'admin_dashboard_stats' %}" style="background: rgba(255,255,255,0.2); color: white; text-decoration: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.3); font-size: 14px;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+            📊 Dashboard Stats
+          </a>
+          <a href="{% url 'admin_user_management' %}" style="background: rgba(255,255,255,0.2); color: white; text-decoration: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.3); font-size: 14px;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+            👥 User Management
+          </a>
+          <a href="{% url 'admin_pet_management' %}" style="background: rgba(255,255,255,0.2); color: white; text-decoration: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.3); font-size: 14px;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+            🐾 Pet Management
+          </a>
+          <a href="{% url 'filter_adoption_requests' %}" style="background: rgba(255,255,255,0.2); color: white; text-decoration: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.3); font-size: 14px;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+            🏠 Adoption Requests
+          </a>
+          <a href="{% url 'search_pets' %}" style="background: rgba(255,255,255,0.2); color: white; text-decoration: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.3); font-size: 14px;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+            🔍 Search & Filter
+          </a>
+        </div>
+      </div>
+      
+      <div class="dashboard-flex">
+        <div class="sidebar">
+          <!-- Admin Profile Section -->
+          <div class="profile-section">
+            {% if user.profile_picture %}
+              <img src="{{ user.profile_picture.url }}" alt="Profile Picture" class="profile-avatar">
+            {% else %}
+              <div class="profile-avatar-placeholder">
+                {{ user.username|first|upper }}
+              </div>
+            {% endif %}
+            <h4>{{ user.username }}</h4>
+            <p>{{ user.role|title }}</p>
+            <a href="#" onclick="showSection('profile')" class="edit-profile-btn">
+              Edit Profile
+            </a>
+          </div>
+          
+          <ul>
+            <li>
+              <a
+                href="#"
+                class="active"
+                onclick="showSection('notifications')"
+                id="link-notifications"
+                >Notifications</a
+              >
+            </li>
+            <li>
+              <a href="#" onclick="showSection('lost')" id="link-lost"
+                >Lost Report Requests</a
+              >
+            </li>
+            <li>
+              <a href="#" onclick="showSection('rescue')" id="link-rescue"
+                >Rescue Report Requests</a
+              >
+            </li>
+            <li>
+              <a href="#" onclick="showSection('adoption')" id="link-adoption"
+                >Adoption Requests</a
+              >
+            </li>
+            <li>
+              <a href="#" onclick="showSection('search')" id="link-search"
+                >Search & Filter</a
+              >
+            </li>
+          </ul>
+        </div>
+        <div class="main-content">
+          <div class="card" id="section-notifications">
+            <h4>Notifications</h4>
+            {% if admin_notifications %}
+              <ul>
+                {% for notification in admin_notifications %}
+                <li style="margin-bottom:10px; padding:10px; background:#f9f9f9; border-radius:5px;">
+                  {{ notification.message }}
+                  <span style="color:#888; font-size:12px;">
+                    ({{ notification.created_at|date:"M d, Y H:i" }})
+                    {% if not notification.is_read %}<strong> - Unread</strong>{% endif %}
+                  </span>
+                </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p>No notifications at the moment.</p>
+            {% endif %}
+          </div>
+          <div class="card" id="section-lost" style="display: none">
+            <h4>Lost Report Requests</h4>
+            {% if pending_reports %}
+              <ul>
+                {% for report in pending_reports %}
+                  {% if report.status == 'lost' %}
+                  <li class="report-item">
+                    <strong>Pet:</strong> {{ report.pet.name }} ({{ report.pet.breed }}) |
+                    <strong>User:</strong> {{ report.user.username }} |
+                    <strong>Status:</strong> {{ report.report_status|title }}
+                    <br><small>Reported on: {{ report.created_at|date:"M d, Y H:i" }}</small>
+                    <div style="margin-top:15px;">
+                      <button onclick="approveReport({{ report.id }})" class="btn btn-success">Approve</button>
+                      <button onclick="rejectReport({{ report.id }})" class="btn btn-danger">Reject</button>
+                    </div>
+                  </li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p>No pending lost pet reports at the moment.</p>
+            {% endif %}
+          </div>
+          <div class="card" id="section-rescue" style="display: none">
+            <h4>Found Pet Report Requests</h4>
+            {% if pending_reports %}
+              <ul>
+                {% for report in pending_reports %}
+                  {% if report.status == 'found' %}
+                  <li style="margin-bottom:20px; background:#f2f8f2; padding:20px; border-radius:8px; display: flex; gap: 15px;">
+                    <div style="flex-shrink: 0;">
+                      {% if report.pet.image %}
+                        <img src="{{ report.pet.image.url }}" alt="{{ report.pet.name }}" 
+                             style="width: 120px; height: 120px; object-fit: cover; border-radius: 8px; border: 2px solid #28a745;">
+                      {% else %}
+                        <div style="width: 120px; height: 120px; background: #e9ecef; border: 2px dashed #6c757d; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #6c757d; font-size: 12px; text-align: center;">
+                          No Image
+                        </div>
+                      {% endif %}
+                    </div>
+                    <div style="flex: 1;">
+                      <strong>Pet:</strong> {{ report.pet.name }} ({{ report.pet.breed }}) |
+                      <strong>User:</strong> {{ report.user.username }} |
+                      <strong>Status:</strong> {{ report.report_status|title }}
+                      <br><strong>Type:</strong> {{ report.pet.type }} | <strong>Color:</strong> {{ report.pet.colour }}
+                      <br><strong>Location:</strong> {{ report.pet.location }}
+                      {% if report.description %}
+                        <br><strong>Description:</strong> {{ report.description }}
+                      {% endif %}
+                      <br><small>Reported on: {{ report.created_at|date:"M d, Y H:i" }}</small>
+                      <div style="margin-top:15px;">
+                        {% if report.report_status == 'pending' %}
+                        <button onclick="approveReport({{ report.id }})" class="btn btn-success">Approve</button>
+                        <button onclick="rejectReport({{ report.id }})" class="btn btn-danger">Reject</button>
+                        {% elif report.report_status == 'approved' and report.pet.status != 'available' %}
+                        <button onclick="markAsAvailableForAdoption({{ report.id }})" class="btn btn-primary">Mark as Available for Adoption</button>
+                        {% elif report.pet.status == 'available' %}
+                        <span class="btn btn-success" style="cursor: default;">Available for Adoption</span>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </li>
+                  {% endif %}
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p>No pending found pet reports at the moment.</p>
+            {% endif %}
+          </div>
+          <div class="card" id="section-adoption" style="display: none">
+            <h4>Adoption Requests{% if current_filter %} - {{ current_filter|title }} Status{% endif %}</h4>
+            {% if pending_adoptions %}
+              <ul>
+                {% for adoption in pending_adoptions %}
+                <li class="report-item">
+                  <strong>Pet:</strong> {{ adoption.pet.name }} ({{ adoption.pet.breed }}) |
+                  <strong>User:</strong> {{ adoption.user.username }} ({{ adoption.user.first_name }} {{ adoption.user.last_name }}) |
+                  <strong>Status:</strong> {{ adoption.status|title }}
+                  <br><small>Requested on: {{ adoption.created_at|date:"M d, Y H:i" }}</small>
+                  <div style="margin-top:15px;">
+                    <button onclick="approveAdoption({{ adoption.id }})" class="btn btn-success">Approve</button>
+                    <button onclick="rejectAdoption({{ adoption.id }})" class="btn btn-danger">Reject</button>
+                  </div>
+                </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p>No {% if current_filter %}{{ current_filter }} {% endif %}adoption requests{% if not current_filter %} pending{% endif %} at the moment.</p>
+            {% endif %}
+          </div>
+          <div class="card" id="section-search" style="display: none">
+            <h4>Search & Filter</h4>
+            <div
+              style="
+                background: #f0f8f0;
+                padding: 20px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+              "
+            >
+              <form
+                method="GET"
+                action="{% url 'search_pets' %}"
+                style="
+                  display: flex;
+                  flex-wrap: wrap;
+                  gap: 15px;
+                  align-items: end;
+                "
+              >
+                <div>
+                  <label>Search:</label
+                  ><input
+                    type="text"
+                    name="q"
+                    placeholder="Name, breed, description..."
+                    style="
+                      padding: 8px;
+                      border-radius: 4px;
+                      border: 1px solid #ccc;
+                    "
+                  />
+                </div>
+                <div>
+                  <label>Breed:</label
+                  ><input
+                    type="text"
+                    name="breed"
+                    placeholder="Breed"
+                    style="
+                      padding: 8px;
+                      border-radius: 4px;
+                      border: 1px solid #ccc;
+                    "
+                  />
+                </div>
+                <div>
+                  <label>Location:</label
+                  ><input
+                    type="text"
+                    name="location"
+                    placeholder="City, State"
+                    style="
+                      padding: 8px;
+                      border-radius: 4px;
+                      border: 1px solid #ccc;
+                    "
+                  />
+                </div>
+                <div>
+                  <label>Type:</label
+                  ><input
+                    type="text"
+                    name="type"
+                    placeholder="Dog, Cat..."
+                    style="
+                      padding: 8px;
+                      border-radius: 4px;
+                      border: 1px solid #ccc;
+                    "
+                  />
+                </div>
+                <button
+                  type="submit"
+                  style="
+                    background: #28a745;
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                  "
+                >
+                  Search Pets
+                </button>
+              </form>
+            </div>
+            <div
+              style="
+                background: #f0f8f0;
+                padding: 20px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+              "
+            >
+              <form
+                method="GET"
+                action="{% url 'search_lost_pets' %}"
+                style="
+                  display: flex;
+                  flex-wrap: wrap;
+                  gap: 15px;
+                  align-items: end;
+                "
+              >
+                <div>
+                  <label>Search Lost Pets:</label
+                  ><input
+                    type="text"
+                    name="q"
+                    placeholder="Name, breed..."
+                    style="
+                      padding: 8px;
+                      border-radius: 4px;
+                      border: 1px solid #ccc;
+                    "
+                  />
+                </div>
+                <div>
+                  <label>Location:</label
+                  ><input
+                    type="text"
+                    name="location"
+                    placeholder="City, State"
+                    style="
+                      padding: 8px;
+                      border-radius: 4px;
+                      border: 1px solid #ccc;
+                    "
+                  />
+                </div>
+                <div>
+                  <label>Breed:</label
+                  ><input
+                    type="text"
+                    name="breed"
+                    placeholder="Breed"
+                    style="
+                      padding: 8px;
+                      border-radius: 4px;
+                      border: 1px solid #ccc;
+                    "
+                  />
+                </div>
+                <button
+                  type="submit"
+                  style="
+                    background: #dc3545;
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                  "
+                >
+                  Search Lost Pets
+                </button>
+              </form>
+            </div>
+            <div style="background: #f0f8f0; padding: 20px; border-radius: 8px">
+              <form
+                method="GET"
+                action="{% url 'dashboard' %}"
+                style="display: flex; gap: 15px; align-items: end"
+              >
+                <div>
+                  <label>Filter Adoptions:</label>
+                  <select
+                    name="status"
+                    style="
+                      padding: 8px;
+                      border-radius: 4px;
+                      border: 1px solid #ccc;
+                    "
+                  >
+                    <option value="" {% if not current_filter %}selected{% endif %}>All Status</option>
+                    <option value="pending" {% if current_filter == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="approved" {% if current_filter == 'approved' %}selected{% endif %}>Approved</option>
+                    <option value="rejected" {% if current_filter == 'rejected' %}selected{% endif %}>Rejected</option>
+                  </select>
+                </div>
+                <button
+                  type="submit"
+                  style="
+                    background: #007bff;
+                    color: white;
+                    border: none;
+                    padding: 10px 20px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                  "
+                >
+                  Filter
+                </button>
+              </form>
+            </div>
+          </div>
+          <div class="card" id="section-profile" style="display: none">
+            <h4 style="color: #dc3545; text-align: center; margin-bottom: 24px">
+              Edit Admin Profile
+            </h4>
+            <form
+              method="post"
+              action="{% url 'update_profile' %}"
+              enctype="multipart/form-data"
+              style="
+                max-width: 500px;
+                margin: 0 auto;
+                background: #ffe6e6;
+                border-radius: 10px;
+                box-shadow: 0 2px 8px #ffcccc;
+                padding: 28px;
+              "
+            >
+              {% csrf_token %}
+              <div style="text-align: center; margin-bottom: 20px;">
+                {% if user.profile_picture %}
+                  <img src="{{ user.profile_picture.url }}" alt="Current Profile Picture" 
+                       style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #dc3545;">
+                {% else %}
+                  <div style="width: 100px; height: 100px; border-radius: 50%; background: #dc3545; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 36px; font-weight: bold;">
+                    {{ user.username|first|upper }}
+                  </div>
+                {% endif %}
+              </div>
+              
+              <div style="margin-bottom: 18px">
+                <label for="profile_picture" style="font-weight: 600; color: #721c24">Profile Picture</label>
+                <input type="file" id="profile_picture" name="profile_picture" accept="image/*"
+                       style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ffcccc; margin-top: 6px;" />
+              </div>
+              
+              <div style="margin-bottom: 18px">
+                <label for="first_name" style="font-weight: 600; color: #721c24">First Name</label>
+                <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}"
+                       style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ffcccc; margin-top: 6px;" />
+              </div>
+              
+              <div style="margin-bottom: 18px">
+                <label for="last_name" style="font-weight: 600; color: #721c24">Last Name</label>
+                <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}"
+                       style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ffcccc; margin-top: 6px;" />
+              </div>
+              
+              <div style="margin-bottom: 18px">
+                <label for="email" style="font-weight: 600; color: #721c24">Email</label>
+                <input type="email" id="email" name="email" value="{{ user.email }}"
+                       style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ffcccc; margin-top: 6px;" />
+              </div>
+              
+              <div style="margin-bottom: 18px">
+                <label for="phone_no" style="font-weight: 600; color: #721c24">Phone Number</label>
+                <input type="text" id="phone_no" name="phone_no" value="{{ user.phone_no }}"
+                       style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ffcccc; margin-top: 6px;" />
+              </div>
+              
+              <div style="margin-bottom: 18px">
+                <label for="address" style="font-weight: 600; color: #721c24">Address</label>
+                <textarea id="address" name="address" rows="3"
+                          style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ffcccc; margin-top: 6px; resize: vertical;">{{ user.address }}</textarea>
+              </div>
+              
+              <div style="display: flex; gap: 10px; margin-bottom: 18px;">
+                <div style="flex: 1;">
+                  <label for="city" style="font-weight: 600; color: #721c24">City</label>
+                  <input type="text" id="city" name="city" value="{{ user.city }}"
+                         style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ffcccc; margin-top: 6px;" />
+                </div>
+                <div style="flex: 1;">
+                  <label for="state" style="font-weight: 600; color: #721c24">State</label>
+                  <input type="text" id="state" name="state" value="{{ user.state }}"
+                         style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ffcccc; margin-top: 6px;" />
+                </div>
+              </div>
+              
+              <div style="display: flex; gap: 10px; margin-bottom: 18px;">
+                <div style="flex: 1;">
+                  <label for="pincode" style="font-weight: 600; color: #721c24">Pincode</label>
+                  <input type="text" id="pincode" name="pincode" value="{{ user.pincode }}"
+                         style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ffcccc; margin-top: 6px;" />
+                </div>
+                <div style="flex: 1;">
+                  <label for="gender" style="font-weight: 600; color: #721c24">Gender</label>
+                  <select id="gender" name="gender"
+                          style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #ffcccc; margin-top: 6px;">
+                    <option value="">Select Gender</option>
+                    <option value="Male" {% if user.gender == 'Male' %}selected{% endif %}>Male</option>
+                    <option value="Female" {% if user.gender == 'Female' %}selected{% endif %}>Female</option>
+                    <option value="Other" {% if user.gender == 'Other' %}selected{% endif %}>Other</option>
+                  </select>
+                </div>
+              </div>
+              
+              <button type="submit"
+                      style="background: #dc3545; color: #fff; border: none; padding: 16px; border-radius: 6px; width: 100%; font-size: 17px; font-weight: 600; cursor: pointer; box-shadow: 0 1px 4px #ffcccc;">
+                Update Profile
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <script>
+        function showSection(section) {
+          document.getElementById("section-notifications").style.display =
+            section === "notifications" ? "" : "none";
+          document.getElementById("section-lost").style.display =
+            section === "lost" ? "" : "none";
+          document.getElementById("section-rescue").style.display =
+            section === "rescue" ? "" : "none";
+          document.getElementById("section-adoption").style.display =
+            section === "adoption" ? "" : "none";
+          document.getElementById("section-search").style.display =
+            section === "search" ? "" : "none";
+          document.getElementById("section-profile").style.display =
+            section === "profile" ? "" : "none";
+          document
+            .getElementById("link-notifications")
+            .classList.toggle("active", section === "notifications");
+          document
+            .getElementById("link-lost")
+            .classList.toggle("active", section === "lost");
+          document
+            .getElementById("link-rescue")
+            .classList.toggle("active", section === "rescue");
+          document
+            .getElementById("link-adoption")
+            .classList.toggle("active", section === "adoption");
+          document
+            .getElementById("link-search")
+            .classList.toggle("active", section === "search");
+        }
+
+        // Admin action functions
+        function approveAdoption(id) {
+          window.location.href = `/api/admin/approve_adoption/${id}/`;
+        }
+
+        function rejectAdoption(id) {
+          window.location.href = `/api/admin/reject_adoption/${id}/`;
+        }
+
+        function approveReport(id) {
+          window.location.href = `/api/admin/approve_report/${id}/`;
+        }
+
+        function rejectReport(id) {
+          window.location.href = `/api/admin/reject_report/${id}/`;
+        }
+
+        function markAsAvailableForAdoption(reportId) {
+          if (confirm('Are you sure you want to mark this pet as available for adoption?')) {
+            window.location.href = `/api/admin/mark_available_for_adoption/${reportId}/`;
+          }
+        }
+      </script>
+      {% elif user.role == 'user' %}
+      <div class="dashboard-flex">
+        <div class="sidebar">
+          <!-- User Profile Section -->
+          <div style="text-align: center; padding: 20px; background: #f8f9fa; border-radius: 10px; margin-bottom: 20px;">
+            {% if user.profile_picture %}
+              <img src="{{ user.profile_picture.url }}" alt="Profile Picture" 
+                   style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #2d7a2d; margin-bottom: 10px;">
+            {% else %}
+              <div style="width: 80px; height: 80px; border-radius: 50%; background: #2d7a2d; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px; font-size: 24px; font-weight: bold;">
+                {{ user.username|first|upper }}
+              </div>
+            {% endif %}
+            <h4 style="margin: 0 0 5px 0; color: #2d7a2d;">{{ user.username }}</h4>
+            <p style="margin: 0; color: #666; font-size: 14px;">{{ user.role|title }}</p>
+            <a href="#" onclick="showUserSection('profile')" 
+               id="link-profile"
+               style="display: inline-block; margin-top: 10px; padding: 5px 15px; background: #2d7a2d; color: white; text-decoration: none; border-radius: 5px; font-size: 12px;">
+              Edit Profile
+            </a>
+          </div>
+          
+          <div class="navigation-menu">
+            <div class="nav-item">
+              <a
+                href="#"
+                class="nav-link"
+                onclick="showUserSection('available')"
+                id="link-available"
+                >Available Pets for Adoption</a
+              >
+            </div>
+            <div class="nav-item">
+              <a
+                href="#"
+                class="nav-link"
+                onclick="showUserSection('reportlost')"
+                id="link-reportlost"
+                >Report a Lost Pet</a
+              >
+            </div>
+            <div class="nav-item">
+              <a
+                href="#"
+                class="nav-link"
+                onclick="showUserSection('submitrescue')"
+                id="link-submitrescue"
+                >Submit Rescue Report</a
+              >
+            </div>
+            <div class="nav-item">
+              <a
+                href="#"
+                class="nav-link"
+                onclick="showUserSection('yourrequests')"
+                id="link-yourrequests"
+                >Your Requests</a
+              >
+            </div>
+            <div class="nav-item">
+              <a
+                href="#"
+                class="nav-link"
+                onclick="showUserSection('lostreports')"
+                id="link-lostreports"
+                >Lost Pet Reports</a
+              >
+            </div>
+          </div>
+        </div>
+        <div class="card-list">
+          <div class="card" id="section-available">
+            <h4>Available Pets for Adoption</h4>
+            <div style="display: flex; flex-wrap: wrap; gap: 24px">
+              {% for pet in available_pets %}
+              <div
+                style="
+                  background: #eafbe7;
+                  border-radius: 12px;
+                  box-shadow: 0 2px 8px #c6e5c6;
+                  padding: 24px;
+                  min-width: 260px;
+                  max-width: 320px;
+                  flex: 1;
+                  display: flex;
+                  flex-direction: column;
+                  align-items: flex-start;
+                "
+              >
+                <span
+                  style="
+                    font-size: 20px;
+                    font-weight: 700;
+                    color: #256625;
+                    margin-bottom: 8px;
+                  "
+                  >{{ pet.name }}</span
+                >
+                <span style="color: #256625; margin-bottom: 4px"
+                  >Breed: <b>{{ pet.breed }}</b></span
+                >
+                <span style="color: #256625; margin-bottom: 4px"
+                  >Type: <b>{{ pet.type }}</b></span
+                >
+                <span style="color: #256625; margin-bottom: 4px"
+                  >Color: <b>{{ pet.colour }}</b></span
+                >
+                <span style="color: #256625; margin-bottom: 4px"
+                  >Location: <b>{{ pet.location }}</b></span
+                >
+                <span style="color: #256625; margin-bottom: 4px"
+                  >Age: <b>{{ pet.age }}</b></span
+                >
+                <span style="color: #256625; margin-bottom: 4px"
+                  >Weight: <b>{{ pet.weight }}</b></span
+                >
+                <span style="color: #256625; margin-bottom: 4px"
+                  >Gender: <b>{{ pet.gender }}</b></span
+                >
+                <span style="color: #256625; margin-bottom: 4px"
+                  >State: <b>{{ pet.state }}</b></span
+                >
+                <span style="color: #256625; margin-bottom: 4px"
+                  >City: <b>{{ pet.city }}</b></span
+                >
+                <span style="color: #256625; margin-bottom: 4px"
+                  >Date: <b>{{ pet.date }}</b></span
+                >
+                <span style="color: #256625; margin-bottom: 4px"
+                  >Vaccinated:
+                  <b>{{ pet.is_vaccinated|yesno:"Yes,No" }}</b></span
+                >
+                <span style="color: #256625; margin-bottom: 4px"
+                  >Diseased: <b>{{ pet.is_diseased|yesno:"Yes,No" }}</b></span
+                >
+                {% if pet.image %}
+                <img
+                  src="{{ pet.image.url }}"
+                  alt="{{ pet.name }}"
+                  style="width: 100%; height: 200px; object-fit: cover; margin: 12px 0; border-radius: 8px; border: 2px solid #2d7a2d;"
+                />
+                {% else %}
+                <div style="width: 100%; height: 200px; background: #f0f0f0; border: 2px dashed #ccc; border-radius: 8px; margin: 12px 0; display: flex; align-items: center; justify-content: center; color: #666; font-size: 16px;">
+                  No Image Available
+                </div>
+                {% endif %}
+                <span style="color: #256625; margin-bottom: 10px"
+                  >{{ pet.description }}</span
+                >
+                <button
+                  onclick="showAdoptionModal('{{ pet.id }}', '{{ pet.name }}')"
+                  style="
+                    margin-top: auto;
+                    background: #2d7a2d;
+                    color: #fff;
+                    border: none;
+                    padding: 10px 0;
+                    border-radius: 6px;
+                    width: 100%;
+                    font-size: 16px;
+                    font-weight: 600;
+                    cursor: pointer;
+                  "
+                >
+                  Request Adoption
+                </button>
+              </div>
+              {% empty %}
+              <div
+                style="
+                  background: #fff;
+                  border-radius: 12px;
+                  box-shadow: 0 2px 8px #ccc;
+                  padding: 24px;
+                  min-width: 260px;
+                  max-width: 320px;
+                  flex: 1;
+                  text-align: center;
+                  color: #256625;
+                  font-size: 17px;
+                "
+              >
+                No pets available for adoption at the moment.
+              </div>
+              {% endfor %}
+            </div>
+            <!-- Adoption Modal -->
+            <div
+              id="adoptionModal"
+              style="
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: rgba(44, 122, 44, 0.15);
+                z-index: 1000;
+                justify-content: center;
+                align-items: center;
+              "
+            >
+              <div
+                style="
+                  background: #fff;
+                  border-radius: 12px;
+                  box-shadow: 0 2px 12px #c6e5c6;
+                  padding: 32px;
+                  max-width: 350px;
+                  margin: auto;
+                  text-align: center;
+                "
+              >
+                <h3 style="color: #2d7a2d; margin-bottom: 18px">
+                  Adoption Request
+                </h3>
+                <div
+                  id="adoptionPetName"
+                  style="
+                    font-size: 18px;
+                    font-weight: 600;
+                    color: #256625;
+                    margin-bottom: 12px;
+                  "
+                ></div>
+                <form method="post" action="/api/request_adoption/">
+                  {% csrf_token %}
+                  <input type="hidden" id="adoptionPetId" name="pet_id" />
+                  <button
+                    type="submit"
+                    style="
+                      background: #2d7a2d;
+                      color: #fff;
+                      border: none;
+                      padding: 10px 0;
+                      border-radius: 6px;
+                      width: 100%;
+                      font-size: 16px;
+                      font-weight: 600;
+                      cursor: pointer;
+                    "
+                  >
+                    Confirm Request
+                  </button>
+                  <button
+                    type="button"
+                    onclick="closeAdoptionModal()"
+                    style="
+                      margin-top: 10px;
+                      background: #c6e5c6;
+                      color: #256625;
+                      border: none;
+                      padding: 8px 0;
+                      border-radius: 6px;
+                      width: 100%;
+                      font-size: 15px;
+                      font-weight: 500;
+                      cursor: pointer;
+                    "
+                  >
+                    Cancel
+                  </button>
+                </form>
+              </div>
+            </div>
+            <script>
+              function showAdoptionModal(petId, petName) {
+                document.getElementById("adoptionModal").style.display = "flex";
+                document.getElementById("adoptionPetName").innerText = petName;
+                document.getElementById("adoptionPetId").value = petId;
+              }
+              function closeAdoptionModal() {
+                document.getElementById("adoptionModal").style.display = "none";
+              }
+            </script>
+          </div>
+          <div class="card" id="section-reportlost" style="display: none">
+            <h4 style="color: #2d7a2d; text-align: center; margin-bottom: 24px">
+              Report a Lost Pet
+            </h4>
+            <form
+              method="post"
+              action="{% url 'report_lost_pet' %}"
+              enctype="multipart/form-data"
+              style="
+                max-width: 440px;
+                margin: 0 auto;
+                background: #eafbe7;
+                border-radius: 10px;
+                box-shadow: 0 2px 8px #c6e5c6;
+                padding: 28px;
+              "
+            >
+              {% csrf_token %}
+              <div style="margin-bottom: 18px">
+                <label for="pet_name" style="font-weight: 600; color: #256625"
+                  >Pet Name</label
+                ><input
+                  type="text"
+                  id="pet_name"
+                  name="pet_name"
+                  required
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #c6e5c6;
+                    margin-top: 6px;
+                  "
+                />
+              </div>
+              <div style="margin-bottom: 18px">
+                <label for="pet_type" style="font-weight: 600; color: #256625"
+                  >Type</label
+                ><input
+                  type="text"
+                  id="pet_type"
+                  name="pet_type"
+                  required
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #c6e5c6;
+                    margin-top: 6px;
+                  "
+                />
+              </div>
+              <div style="margin-bottom: 18px">
+                <label for="pet_breed" style="font-weight: 600; color: #256625"
+                  >Breed</label
+                ><input
+                  type="text"
+                  id="pet_breed"
+                  name="pet_breed"
+                  required
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #c6e5c6;
+                    margin-top: 6px;
+                  "
+                />
+              </div>
+              <div style="margin-bottom: 18px">
+                <label for="pet_colour" style="font-weight: 600; color: #256625"
+                  >Colour</label
+                ><input
+                  type="text"
+                  id="pet_colour"
+                  name="pet_colour"
+                  required
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #c6e5c6;
+                    margin-top: 6px;
+                  "
+                />
+              </div>
+              <div style="margin-bottom: 18px">
+                <label
+                  for="pet_location"
+                  style="font-weight: 600; color: #256625"
+                  >Last Seen Location</label
+                ><input
+                  type="text"
+                  id="pet_location"
+                  name="pet_location"
+                  required
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #c6e5c6;
+                    margin-top: 6px;
+                  "
+                />
+              </div>
+              <div style="margin-bottom: 18px">
+                <label for="pet_image" style="font-weight: 600; color: #256625"
+                  >Image</label
+                ><input
+                  type="file"
+                  id="pet_image"
+                  name="pet_image"
+                  accept="image/*"
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #c6e5c6;
+                    margin-top: 6px;
+                  "
+                />
+              </div>
+              <div style="margin-bottom: 18px">
+                <label for="pet_age" style="font-weight: 600; color: #256625"
+                  >Age</label
+                ><input
+                  type="number"
+                  id="pet_age"
+                  name="pet_age"
+                  min="0"
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #c6e5c6;
+                    margin-top: 6px;
+                  "
+                />
+              </div>
+              <div style="margin-bottom: 18px">
+                <label for="pet_weight" style="font-weight: 600; color: #256625"
+                  >Weight</label
+                ><input
+                  type="number"
+                  id="pet_weight"
+                  name="pet_weight"
+                  min="0"
+                  step="0.1"
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #c6e5c6;
+                    margin-top: 6px;
+                  "
+                />
+              </div>
+              <div style="margin-bottom: 18px">
+                <label for="pet_gender" style="font-weight: 600; color: #256625"
+                  >Gender</label
+                ><input
+                  type="text"
+                  id="pet_gender"
+                  name="pet_gender"
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #c6e5c6;
+                    margin-top: 6px;
+                  "
+                />
+              </div>
+              <div style="margin-bottom: 18px">
+                <label for="pet_state" style="font-weight: 600; color: #256625"
+                  >State</label
+                ><input
+                  type="text"
+                  id="pet_state"
+                  name="pet_state"
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #c6e5c6;
+                    margin-top: 6px;
+                  "
+                />
+              </div>
+              <div style="margin-bottom: 18px">
+                <label for="pet_city" style="font-weight: 600; color: #256625"
+                  >City</label
+                ><input
+                  type="text"
+                  id="pet_city"
+                  name="pet_city"
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #c6e5c6;
+                    margin-top: 6px;
+                  "
+                />
+              </div>
+              <div style="margin-bottom: 18px">
+                <label for="pet_date" style="font-weight: 600; color: #256625"
+                  >Date</label
+                ><input
+                  type="date"
+                  id="pet_date"
+                  name="pet_date"
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #c6e5c6;
+                    margin-top: 6px;
+                  "
+                />
+              </div>
+              <div style="margin-bottom: 18px">
+                <label
+                  for="pet_is_vaccinated"
+                  style="font-weight: 600; color: #256625"
+                  >Vaccinated</label
+                ><select
+                  id="pet_is_vaccinated"
+                  name="pet_is_vaccinated"
+                  onchange="toggleVaccineFields()"
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #c6e5c6;
+                    margin-top: 6px;
+                  "
+                >
+                  <option value="false">No</option>
+                  <option value="true">Yes</option>
+                </select>
+              </div>
+
+              <!-- Vaccine Fields (Hidden by default) -->
+              <div
+                id="vaccine_fields"
+                style="
+                  display: none;
+                  margin-bottom: 18px;
+                  background: #f0f8f0;
+                  padding: 15px;
+                  border-radius: 8px;
+                "
+              >
+                <div style="margin-bottom: 15px">
+                  <label
+                    for="vaccine_name"
+                    style="font-weight: 600; color: #256625"
+                    >Vaccine Name</label
+                  ><input
+                    type="text"
+                    id="vaccine_name"
+                    name="vaccine_name"
+                    style="
+                      width: 100%;
+                      padding: 10px;
+                      border-radius: 6px;
+                      border: 1px solid #c6e5c6;
+                      margin-top: 6px;
+                    "
+                  />
+                </div>
+                <div style="margin-bottom: 15px">
+                  <label
+                    for="last_vaccinated_date"
+                    style="font-weight: 600; color: #256625"
+                    >Last Vaccinated Date</label
+                  ><input
+                    type="date"
+                    id="last_vaccinated_date"
+                    name="last_vaccinated_date"
+                    style="
+                      width: 100%;
+                      padding: 10px;
+                      border-radius: 6px;
+                      border: 1px solid #c6e5c6;
+                      margin-top: 6px;
+                    "
+                  />
+                </div>
+              </div>
+
+              <div style="margin-bottom: 18px">
+                <label
+                  for="pet_is_diseased"
+                  style="font-weight: 600; color: #256625"
+                  >Diseased</label
+                ><select
+                  id="pet_is_diseased"
+                  name="pet_is_diseased"
+                  onchange="toggleDiseaseFields()"
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #c6e5c6;
+                    margin-top: 6px;
+                  "
+                >
+                  <option value="false">No</option>
+                  <option value="true">Yes</option>
+                </select>
+              </div>
+
+              <!-- Disease Fields (Hidden by default) -->
+              <div
+                id="disease_fields"
+                style="
+                  display: none;
+                  margin-bottom: 18px;
+                  background: #f0f8f0;
+                  padding: 15px;
+                  border-radius: 8px;
+                "
+              >
+                <div style="margin-bottom: 15px">
+                  <label
+                    for="disease_name"
+                    style="font-weight: 600; color: #256625"
+                    >Disease Name</label
+                  ><input
+                    type="text"
+                    id="disease_name"
+                    name="disease_name"
+                    style="
+                      width: 100%;
+                      padding: 10px;
+                      border-radius: 6px;
+                      border: 1px solid #c6e5c6;
+                      margin-top: 6px;
+                    "
+                  />
+                </div>
+                <div style="margin-bottom: 15px">
+                  <label for="stage" style="font-weight: 600; color: #256625"
+                    >Stage</label
+                  ><input
+                    type="text"
+                    id="stage"
+                    name="stage"
+                    style="
+                      width: 100%;
+                      padding: 10px;
+                      border-radius: 6px;
+                      border: 1px solid #c6e5c6;
+                      margin-top: 6px;
+                    "
+                  />
+                </div>
+                <div style="margin-bottom: 15px">
+                  <label
+                    for="treatment_name"
+                    style="font-weight: 600; color: #256625"
+                    >Treatment Name</label
+                  ><input
+                    type="text"
+                    id="treatment_name"
+                    name="treatment_name"
+                    style="
+                      width: 100%;
+                      padding: 10px;
+                      border-radius: 6px;
+                      border: 1px solid #c6e5c6;
+                      margin-top: 6px;
+                    "
+                  />
+                </div>
+                <div style="margin-bottom: 15px">
+                  <label
+                    for="no_of_years"
+                    style="font-weight: 600; color: #256625"
+                    >Number of Years</label
+                  ><input
+                    type="number"
+                    id="no_of_years"
+                    name="no_of_years"
+                    min="0"
+                    style="
+                      width: 100%;
+                      padding: 10px;
+                      border-radius: 6px;
+                      border: 1px solid #c6e5c6;
+                      margin-top: 6px;
+                    "
+                  />
+                </div>
+              </div>
+
+              <div style="margin-bottom: 18px">
+                <label
+                  for="description"
+                  style="font-weight: 600; color: #256625"
+                  >Description</label
+                ><textarea
+                  id="description"
+                  name="description"
+                  required
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #c6e5c6;
+                    margin-top: 6px;
+                    min-height: 80px;
+                  "
+                ></textarea>
+              </div>
+
+              <script>
+                function toggleVaccineFields() {
+                  const vaccinated =
+                    document.getElementById("pet_is_vaccinated").value;
+                  const vaccineFields =
+                    document.getElementById("vaccine_fields");
+                  vaccineFields.style.display =
+                    vaccinated === "true" ? "block" : "none";
+                }
+
+                function toggleDiseaseFields() {
+                  const diseased =
+                    document.getElementById("pet_is_diseased").value;
+                  const diseaseFields =
+                    document.getElementById("disease_fields");
+                  diseaseFields.style.display =
+                    diseased === "true" ? "block" : "none";
+                }
+              </script>
+              <button
+                type="submit"
+                style="
+                  background: #2d7a2d;
+                  color: #fff;
+                  border: none;
+                  padding: 13px 0;
+                  border-radius: 6px;
+                  width: 100%;
+                  font-size: 17px;
+                  font-weight: 600;
+                  cursor: pointer;
+                  box-shadow: 0 1px 4px #c6e5c6;
+                "
+              >
+                Submit Report
+              </button>
+            </form>
+            <div
+              style="
+                text-align: center;
+                margin-top: 18px;
+                color: #256625;
+                font-size: 15px;
+              "
+            >
+              Please provide accurate details to help us find your pet quickly.
+            </div>
+          </div>
+          <div class="card" id="section-submitrescue" style="display: none">
+            <h4 style="color: #856404; text-align: center; margin-bottom: 24px">
+              Submit Rescue Report
+            </h4>
+            <p style="text-align: center; color: #856404; margin-bottom: 24px">
+              Found a pet? Report it here to help reunite pets with their families!
+            </p>
+            <form
+              method="post"
+              action="{% url 'submit_rescue_report' %}"
+              enctype="multipart/form-data"
+              style="
+                max-width: 440px;
+                margin: 0 auto;
+                background: #fff3cd;
+                border-radius: 10px;
+                box-shadow: 0 2px 8px #f0e68c;
+                padding: 28px;
+              "
+            >
+              {% csrf_token %}
+              <div style="margin-bottom: 18px">
+                <label for="found_pet_name" style="font-weight: 600; color: #856404"
+                  >Pet Name (if known)</label
+                ><input
+                  type="text"
+                  id="found_pet_name"
+                  name="found_pet_name"
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #f0e68c;
+                    margin-top: 6px;
+                  "
+                />
+              </div>
+              <div style="margin-bottom: 18px">
+                <label for="found_pet_type" style="font-weight: 600; color: #856404"
+                  >Type *</label
+                ><input
+                  type="text"
+                  id="found_pet_type"
+                  name="found_pet_type"
+                  required
+                  placeholder="e.g., Dog, Cat, Bird"
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #f0e68c;
+                    margin-top: 6px;
+                  "
+                />
+              </div>
+              <div style="margin-bottom: 18px">
+                <label for="found_pet_breed" style="font-weight: 600; color: #856404"
+                  >Breed</label
+                ><input
+                  type="text"
+                  id="found_pet_breed"
+                  name="found_pet_breed"
+                  placeholder="e.g., Golden Retriever, Persian Cat"
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #f0e68c;
+                    margin-top: 6px;
+                  "
+                />
+              </div>
+              <div style="margin-bottom: 18px">
+                <label for="found_pet_colour" style="font-weight: 600; color: #856404"
+                  >Color *</label
+                ><input
+                  type="text"
+                  id="found_pet_colour"
+                  name="found_pet_colour"
+                  required
+                  placeholder="e.g., Brown, Black, White"
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #f0e68c;
+                    margin-top: 6px;
+                  "
+                />
+              </div>
+              <div style="margin-bottom: 18px">
+                <label
+                  for="found_pet_location"
+                  style="font-weight: 600; color: #856404"
+                  >Found Location *</label
+                ><input
+                  type="text"
+                  id="found_pet_location"
+                  name="found_pet_location"
+                  required
+                  placeholder="Where did you find this pet?"
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #f0e68c;
+                    margin-top: 6px;
+                  "
+                />
+              </div>
+              <div style="margin-bottom: 18px">
+                <label for="found_pet_image" style="font-weight: 600; color: #856404"
+                  >Pet Photo</label
+                ><input
+                  type="file"
+                  id="found_pet_image"
+                  name="found_pet_image"
+                  accept="image/*"
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #f0e68c;
+                    margin-top: 6px;
+                  "
+                />
+              </div>
+              <div style="margin-bottom: 18px">
+                <label for="found_pet_description" style="font-weight: 600; color: #856404"
+                  >Description</label
+                ><textarea
+                  id="found_pet_description"
+                  name="found_pet_description"
+                  rows="4"
+                  placeholder="Describe the pet's condition, behavior, any identifying features..."
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #f0e68c;
+                    margin-top: 6px;
+                    resize: vertical;
+                  "
+                ></textarea>
+              </div>
+              <div style="margin-bottom: 18px">
+                <label for="found_pet_age" style="font-weight: 600; color: #856404"
+                  >Estimated Age</label
+                ><input
+                  type="number"
+                  id="found_pet_age"
+                  name="found_pet_age"
+                  min="0"
+                  placeholder="Age in years (if known)"
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #f0e68c;
+                    margin-top: 6px;
+                  "
+                />
+              </div>
+              <div style="margin-bottom: 18px">
+                <label for="found_pet_gender" style="font-weight: 600; color: #856404"
+                  >Gender</label
+                ><select
+                  id="found_pet_gender"
+                  name="found_pet_gender"
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #f0e68c;
+                    margin-top: 6px;
+                  "
+                >
+                  <option value="">Select if known</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Unknown">Unknown</option>
+                </select>
+              </div>
+              <div style="margin-bottom: 18px">
+                <label for="found_pet_state" style="font-weight: 600; color: #856404"
+                  >State *</label
+                ><input
+                  type="text"
+                  id="found_pet_state"
+                  name="found_pet_state"
+                  required
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #f0e68c;
+                    margin-top: 6px;
+                  "
+                />
+              </div>
+              <div style="margin-bottom: 18px">
+                <label for="found_pet_city" style="font-weight: 600; color: #856404"
+                  >City *</label
+                ><input
+                  type="text"
+                  id="found_pet_city"
+                  name="found_pet_city"
+                  required
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #f0e68c;
+                    margin-top: 6px;
+                  "
+                />
+              </div>
+              <div style="margin-bottom: 18px">
+                <label for="found_date" style="font-weight: 600; color: #856404"
+                  >Date Found *</label
+                ><input
+                  type="date"
+                  id="found_date"
+                  name="found_date"
+                  required
+                  style="
+                    width: 100%;
+                    padding: 10px;
+                    border-radius: 6px;
+                    border: 1px solid #f0e68c;
+                    margin-top: 6px;
+                  "
+                />
+              </div>
+              <button
+                type="submit"
+                style="
+                  background: #ffc107;
+                  color: #212529;
+                  border: none;
+                  padding: 16px;
+                  border-radius: 6px;
+                  width: 100%;
+                  font-size: 17px;
+                  font-weight: 600;
+                  cursor: pointer;
+                  box-shadow: 0 1px 4px #f0e68c;
+                "
+              >
+                Submit Rescue Report
+              </button>
+            </form>
+            <div
+              style="
+                text-align: center;
+                margin-top: 18px;
+                color: #856404;
+                font-size: 15px;
+              "
+            >
+              Your report will be reviewed by our admin team to help reunite pets with their families.
+            </div>
+          </div>
+          <div class="card" id="section-lostreports" style="display: none; background: linear-gradient(145deg, #ffffff 0%, #fefefe 100%); border-radius: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); border: 1px solid rgba(239, 68, 68, 0.1);">
+            <!-- Enhanced Header -->
+            <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.05) 100%); padding: 25px; border-radius: 15px; margin-bottom: 30px; border: 1px solid rgba(239, 68, 68, 0.15); position: relative;">
+              <div style="display: flex; align-items: center; gap: 20px;">
+                <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding: 15px; border-radius: 50%; box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);">
+                  <span style="font-size: 32px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));">🔍</span>
+                </div>
+                <div>
+                  <h2 style="color: #dc2626; margin: 0; font-weight: 800; font-size: 28px; text-shadow: 0 2px 4px rgba(0,0,0,0.1); background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Community Lost Pet Reports</h2>
+                  <p style="color: #7f1d1d; margin: 8px 0 0 0; font-size: 16px; font-weight: 500;">Help reunite missing pets with their families - Everyone can help! 🤝</p>
+                </div>
+              </div>
+              <!-- Decorative elements -->
+              <div style="position: absolute; top: 15px; right: 15px; opacity: 0.3;">
+                <span style="font-size: 20px;">🐕</span>
+                <span style="font-size: 18px; margin-left: 5px;">🐱</span>
+                <span style="font-size: 16px; margin-left: 3px;">🐰</span>
+              </div>
+            </div>
+            
+            <!-- Reports Grid -->
+            <div style="display: grid; gap: 25px; padding: 0 5px;">
+              {% for report in lost_pet_reports %}
+              <div style="background: linear-gradient(145deg, #ffffff 0%, #fefefe 100%); border-radius: 20px; padding: 25px; box-shadow: 0 8px 32px rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.15); position: relative; overflow: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;" 
+                   onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 15px 45px rgba(239, 68, 68, 0.2)'"
+                   onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 32px rgba(239, 68, 68, 0.12)'">
+                
+                <!-- Top gradient line -->
+                <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #ef4444 0%, #f87171 50%, #ef4444 100%);"></div>
+                
+                <!-- Urgency badge -->
+                <div style="position: absolute; top: 20px; right: 20px;">
+                  <span style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: 8px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 3px 10px rgba(239, 68, 68, 0.4); animation: pulse 2s infinite;">
+                    🚨 MISSING
+                  </span>
+                </div>
+                
+                <div style="display: flex; gap: 25px; align-items: flex-start;">
+                  <!-- Enhanced Pet Image -->
+                  <div style="flex-shrink: 0; position: relative;">
+                    {% if report.pet.image %}
+                    <div style="position: relative; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); transition: all 0.3s ease;" 
+                         onmouseover="this.style.transform='scale(1.05) rotate(1deg)'"
+                         onmouseout="this.style.transform='scale(1) rotate(0deg)'">
+                      <img src="{{ report.pet.image.url }}" alt="{{ report.pet.name }}"
+                           style="width: 140px; height: 140px; object-fit: cover;" />
+                      <div style="position: absolute; inset: 0; background: linear-gradient(45deg, transparent 60%, rgba(239, 68, 68, 0.3)); pointer-events: none;"></div>
+                      <div style="position: absolute; bottom: 8px; left: 8px; background: rgba(239, 68, 68, 0.95); backdrop-filter: blur(4px); color: white; padding: 4px 10px; border-radius: 15px; font-size: 10px; font-weight: 700; text-transform: uppercase;">
+                        Lost Pet
+                      </div>
+                    </div>
+                    {% else %}
+                    <div style="width: 140px; height: 140px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15) 0%, rgba(220, 38, 38, 0.05) 100%); border: 3px dashed #ef4444; border-radius: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #ef4444; position: relative;">
+                      <span style="font-size: 40px; margin-bottom: 8px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">📷</span>
+                      <span style="font-size: 11px; font-weight: 700; text-align: center; text-transform: uppercase;">No Photo<br>Available</span>
+                      <div style="position: absolute; bottom: 8px; left: 8px; background: rgba(239, 68, 68, 0.95); color: white; padding: 4px 10px; border-radius: 15px; font-size: 10px; font-weight: 700; text-transform: uppercase;">
+                        Lost Pet
+                      </div>
+                    </div>
+                    {% endif %}
+                  </div>
+                  
+                  <!-- Enhanced Pet Information -->
+                  <div style="flex: 1; min-width: 0;">
+                    <!-- Pet Name and Breed -->
+                    <div style="margin-bottom: 18px;">
+                      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+                        <span style="font-size: 28px;">🐾</span>
+                        <h3 style="color: #dc2626; margin: 0; font-size: 26px; font-weight: 800; text-shadow: 0 1px 2px rgba(0,0,0,0.1); background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">{{ report.pet.name }}</h3>
+                        <span style="background: rgba(239, 68, 68, 0.15); color: #dc2626; padding: 6px 12px; border-radius: 20px; font-size: 13px; font-weight: 700; border: 1px solid rgba(239, 68, 68, 0.3);">{{ report.pet.breed }}</span>
+                      </div>
+                    </div>
+                    
+                    <!-- Enhanced Details Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 20px;">
+                      <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(220, 38, 38, 0.03) 100%); padding: 14px 16px; border-radius: 15px; border-left: 4px solid #ef4444; transition: all 0.3s ease;" onmouseover="this.style.transform='translateX(3px)'" onmouseout="this.style.transform='translateX(0)'">
+                        <div style="font-size: 11px; color: #7f1d1d; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                          <span style="font-size: 14px;">🏷️</span>
+                          Pet Type
+                        </div>
+                        <div style="color: #1f2937; font-weight: 700; font-size: 15px;">{{ report.pet.type|title }}</div>
+                      </div>
+                      <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(220, 38, 38, 0.03) 100%); padding: 14px 16px; border-radius: 15px; border-left: 4px solid #ef4444; transition: all 0.3s ease;" onmouseover="this.style.transform='translateX(3px)'" onmouseout="this.style.transform='translateX(0)'">
+                        <div style="font-size: 11px; color: #7f1d1d; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                          <span style="font-size: 14px;">🎨</span>
+                          Color
+                        </div>
+                        <div style="color: #1f2937; font-weight: 700; font-size: 15px;">{{ report.pet.colour|title }}</div>
+                      </div>
+                      <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(220, 38, 38, 0.03) 100%); padding: 14px 16px; border-radius: 15px; border-left: 4px solid #ef4444; transition: all 0.3s ease;" onmouseover="this.style.transform='translateX(3px)'" onmouseout="this.style.transform='translateX(0)'">
+                        <div style="font-size: 11px; color: #7f1d1d; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                          <span style="font-size: 14px;">📍</span>
+                          Last Seen
+                        </div>
+                        <div style="color: #1f2937; font-weight: 700; font-size: 15px;">{{ report.pet.location }}</div>
+                      </div>
+                      <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(220, 38, 38, 0.03) 100%); padding: 14px 16px; border-radius: 15px; border-left: 4px solid #ef4444; transition: all 0.3s ease;" onmouseover="this.style.transform='translateX(3px)'" onmouseout="this.style.transform='translateX(0)'">
+                        <div style="font-size: 11px; color: #7f1d1d; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                          <span style="font-size: 14px;">📅</span>
+                          Date Lost
+                        </div>
+                        <div style="color: #1f2937; font-weight: 700; font-size: 15px;">{{ report.created_at|date:"M d, Y" }}</div>
+                      </div>
+                      <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(5, 150, 105, 0.03) 100%); padding: 14px 16px; border-radius: 15px; border-left: 4px solid #10b981; transition: all 0.3s ease;" onmouseover="this.style.transform='translateX(3px)'" onmouseout="this.style.transform='translateX(0)'">
+                        <div style="font-size: 11px; color: #064e3b; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                          <span style="font-size: 14px;">👤</span>
+                          Reported By
+                        </div>
+                        <div style="color: #1f2937; font-weight: 700; font-size: 15px;">{{ report.user.username }}</div>
+                      </div>
+                      <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(79, 70, 229, 0.03) 100%); padding: 14px 16px; border-radius: 15px; border-left: 4px solid #6366f1; transition: all 0.3s ease;" onmouseover="this.style.transform='translateX(3px)'" onmouseout="this.style.transform='translateX(0)'">
+                        <div style="font-size: 11px; color: #312e81; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                          <span style="font-size: 14px;">📞</span>
+                          Contact
+                        </div>
+                        <div style="color: #1f2937; font-weight: 700; font-size: 15px;">
+                          {% if report.user.phone_no %}
+                            {{ report.user.phone_no }}
+                          {% else %}
+                            {{ report.user.email }}
+                          {% endif %}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <!-- Enhanced Description -->
+                    <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.03) 100%); padding: 18px; border-radius: 18px; margin-bottom: 18px; border: 1px solid rgba(239, 68, 68, 0.15); position: relative;">
+                      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <span style="font-size: 18px;">📝</span>
+                        <strong style="color: #7f1d1d; font-size: 15px; font-weight: 700;">Description & Details</strong>
+                      </div>
+                      <p style="color: #374151; margin: 0; line-height: 1.6; font-style: italic; font-size: 15px;">{{ report.description }}</p>
+                    </div>
+                    
+                    <!-- Status and Actions -->
+                    <div style="display: flex; justify-content: between; align-items: center; gap: 20px; flex-wrap: wrap;">
+                      <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="background: {% if report.report_status == 'resolved' %}linear-gradient(135deg, #10b981 0%, #059669 100%){% else %}linear-gradient(135deg, #f59e0b 0%, #d97706 100%){% endif %}; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 3px 12px {% if report.report_status == 'resolved' %}rgba(16, 185, 129, 0.4){% else %}rgba(245, 158, 11, 0.4){% endif %};">
+                          {% if report.report_status == 'resolved' %}✅ Found{% else %}⏳ {{ report.report_status|title }}{% endif %}
+                        </span>
+                        <span style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 3px 12px rgba(239, 68, 68, 0.4);">
+                          {{ report.status|title }}
+                        </span>
+                      </div>
+                      
+                      {% if report.report_status != 'resolved' %}
+                      <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        {% if report.user == user %}
+                        <!-- Original reporter can mark as found -->
+                        <button onclick="markAsResolved({{ report.id }})" 
+                                style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; padding: 12px 24px; border-radius: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; font-size: 14px; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4); display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px;"
+                                onmouseover="this.style.transform='translateY(-3px) scale(1.02)'; this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.5)'"
+                                onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 6px 20px rgba(16, 185, 129, 0.4)'">
+                          <span style="font-size: 16px;">✅</span>
+                          Mark as Found
+                        </button>
+                        {% else %}
+                        <!-- Other users can offer help -->
+                        <button onclick="contactOwner('{{ report.user.username }}', '{{ report.pet.name }}')" 
+                                style="background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); color: white; border: none; padding: 12px 24px; border-radius: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; font-size: 14px; box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4); display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px;"
+                                onmouseover="this.style.transform='translateY(-3px) scale(1.02)'; this.style.boxShadow='0 8px 25px rgba(99, 102, 241, 0.5)'"
+                                onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 6px 20px rgba(99, 102, 241, 0.4)'">
+                          <span style="font-size: 16px;">🤝</span>
+                          Offer Help
+                        </button>
+                        <button onclick="reportSighting('{{ report.id }}')" 
+                                style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white; border: none; padding: 12px 24px; border-radius: 18px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; font-size: 14px; box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4); display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px;"
+                                onmouseover="this.style.transform='translateY(-3px) scale(1.02)'; this.style.boxShadow='0 8px 25px rgba(245, 158, 11, 0.5)'"
+                                onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 6px 20px rgba(245, 158, 11, 0.4)'">
+                          <span style="font-size: 16px;">👁️</span>
+                          Report Sighting
+                        </button>
+                        {% endif %}
+                      </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {% empty %}
+              <div style="text-align: center; padding: 80px 40px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(220, 38, 38, 0.02) 100%); border-radius: 25px; border: 2px dashed rgba(239, 68, 68, 0.2); margin: 20px 0;">
+                <div style="margin-bottom: 25px;">
+                  <span style="font-size: 80px; display: block; margin-bottom: 20px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1)); animation: bounce 2s infinite;">🔍</span>
+                </div>
+                <h3 style="color: #dc2626; margin: 0 0 15px 0; font-weight: 800; font-size: 24px; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">No Lost Pet Reports Found</h3>
+                <p style="color: #7f1d1d; margin: 0 0 25px 0; font-size: 18px; line-height: 1.6; max-width: 400px; margin-left: auto; margin-right: auto;">Great news! There are currently no reported missing pets in the system. All our furry friends are safe at home! 🏠</p>
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                  <button onclick="showUserSection('reportlost')" 
+                          style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; border: none; padding: 15px 30px; border-radius: 20px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(239, 68, 68, 0.3); font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px;"
+                          onmouseover="this.style.transform='translateY(-3px) scale(1.02)'; this.style.boxShadow='0 8px 25px rgba(239, 68, 68, 0.4)'"
+                          onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 6px 20px rgba(239, 68, 68, 0.3)'">
+                    🚨 Report Lost Pet
+                  </button>
+                  <button onclick="showUserSection('available')" 
+                          style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; padding: 15px 30px; border-radius: 20px; font-weight: 700; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3); font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px;"
+                          onmouseover="this.style.transform='translateY(-3px) scale(1.02)'; this.style.boxShadow='0 8px 25px rgba(16, 185, 129, 0.4)'"
+                          onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 6px 20px rgba(16, 185, 129, 0.3)'">
+                    🏠 View Available Pets
+                  </button>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="card" id="section-yourrequests" style="display: none">
+            <h4 style="color: #2d7a2d; text-align: center; margin-bottom: 24px">
+              Your Requests
+            </h4>
+            
+            <!-- Enhanced Tab Navigation -->
+            <div class="tab-nav">
+              <a href="#" onclick="showRequestTab('lost')" id="tab-lost" class="active">
+                🔍 Lost Pet Reports
+              </a>
+              <a href="#" onclick="showRequestTab('rescue')" id="tab-rescue">
+                🆘 Rescue Reports
+              </a>
+            </div>
+
+            <!-- Lost Pet Requests Tab -->
+            <div id="lost-requests-tab" class="request-tab-content" style="display: block;">
+              <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.05) 100%); padding: 20px; border-radius: 15px; border: 1px solid rgba(239, 68, 68, 0.2);">
+                <div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding: 12px; border-radius: 50%; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);">
+                  <span style="font-size: 28px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));">🔍</span>
+                </div>
+                <div>
+                  <h5 style="color: #dc2626; margin: 0; font-weight: 700; font-size: 20px; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">Your Lost Pet Reports</h5>
+                  <p style="color: #7f1d1d; margin: 5px 0 0 0; font-size: 14px; font-weight: 500;">Track and manage your missing pets</p>
+                </div>
+              </div>
+              
+              <div style="display: grid; gap: 20px;">
+                {% for report in user_lost_reports %}
+                <div class="report-item lost-report" style="background: linear-gradient(145deg, #ffffff 0%, #fefefe 100%); border-radius: 20px; padding: 25px; box-shadow: 0 8px 32px rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.15); position: relative; overflow: hidden; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);">
+                  <!-- Decorative gradient overlay -->
+                  <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #ef4444 0%, #f87171 50%, #ef4444 100%);"></div>
+                  
+                  <!-- Status badge -->
+                  <div style="position: absolute; top: 20px; right: 20px;">
+                    <span style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);">
+                      {{ report.status|title }}
+                    </span>
+                  </div>
+                  
+                  <div style="display: flex; gap: 20px; align-items: flex-start;">
+                    <!-- Pet Image Section -->
+                    <div style="flex-shrink: 0; position: relative;">
+                      {% if report.pet.image %}
+                      <div style="position: relative; border-radius: 18px; overflow: hidden; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);">
+                        <img src="{{ report.pet.image.url }}" alt="{{ report.pet.name }}"
+                             style="width: 120px; height: 120px; object-fit: cover; transition: transform 0.3s ease;" 
+                             onmouseover="this.style.transform='scale(1.05)'" 
+                             onmouseout="this.style.transform='scale(1)'" />
+                        <div style="position: absolute; top: 8px; left: 8px; background: rgba(239, 68, 68, 0.9); backdrop-filter: blur(4px); color: white; padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: 600;">
+                          MISSING
+                        </div>
+                      </div>
+                      {% else %}
+                      <div style="width: 120px; height: 120px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.05) 100%); border: 2px dashed #ef4444; border-radius: 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #ef4444; position: relative;">
+                        <span style="font-size: 32px; margin-bottom: 4px;">📷</span>
+                        <span style="font-size: 10px; font-weight: 600; text-align: center;">No Photo</span>
+                        <div style="position: absolute; top: 8px; left: 8px; background: rgba(239, 68, 68, 0.9); color: white; padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: 600;">
+                          MISSING
+                        </div>
+                      </div>
+                      {% endif %}
+                    </div>
+                    
+                    <!-- Pet Information Section -->
+                    <div style="flex: 1; min-width: 0;">
+                      <!-- Pet Name and Type -->
+                      <div style="margin-bottom: 15px;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                          <span style="font-size: 24px;">🐕</span>
+                          <h3 style="color: #dc2626; margin: 0; font-size: 22px; font-weight: 700; text-shadow: 0 1px 2px rgba(0,0,0,0.1);">{{ report.pet.name }}</h3>
+                          <span style="background: rgba(239, 68, 68, 0.1); color: #dc2626; padding: 4px 10px; border-radius: 15px; font-size: 12px; font-weight: 600;">{{ report.pet.breed }}</span>
+                        </div>
+                      </div>
+                      
+                      <!-- Pet Details Grid -->
+                      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 15px;">
+                        <div style="background: rgba(239, 68, 68, 0.05); padding: 10px 12px; border-radius: 12px; border-left: 3px solid #ef4444;">
+                          <div style="font-size: 11px; color: #7f1d1d; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Type</div>
+                          <div style="color: #1f2937; font-weight: 600;">{{ report.pet.type|title }}</div>
+                        </div>
+                        <div style="background: rgba(239, 68, 68, 0.05); padding: 10px 12px; border-radius: 12px; border-left: 3px solid #ef4444;">
+                          <div style="font-size: 11px; color: #7f1d1d; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Color</div>
+                          <div style="color: #1f2937; font-weight: 600;">{{ report.pet.colour|title }}</div>
+                        </div>
+                        <div style="background: rgba(239, 68, 68, 0.05); padding: 10px 12px; border-radius: 12px; border-left: 3px solid #ef4444;">
+                          <div style="font-size: 11px; color: #7f1d1d; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Location</div>
+                          <div style="color: #1f2937; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                            <span style="font-size: 12px;">📍</span>
+                            {{ report.pet.location }}
+                          </div>
+                        </div>
+                        <div style="background: rgba(239, 68, 68, 0.05); padding: 10px 12px; border-radius: 12px; border-left: 3px solid #ef4444;">
+                          <div style="font-size: 11px; color: #7f1d1d; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px;">Date Lost</div>
+                          <div style="color: #1f2937; font-weight: 600;">{{ report.created_at|date:"M d, Y" }}</div>
+                        </div>
+                      </div>
+                      
+                      <!-- Description -->
+                      <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(220, 38, 38, 0.03) 100%); padding: 15px; border-radius: 15px; margin-bottom: 15px; border: 1px solid rgba(239, 68, 68, 0.1);">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                          <span style="font-size: 16px;">📝</span>
+                          <strong style="color: #7f1d1d; font-size: 14px;">Description</strong>
+                        </div>
+                        <p style="color: #374151; margin: 0; line-height: 1.5; font-style: italic;">{{ report.description }}</p>
+                      </div>
+                      
+                      <!-- Report Status and Actions -->
+                      <div style="display: flex; justify-content: between; align-items: center; gap: 15px;">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                          <span style="background: {% if report.report_status == 'resolved' %}linear-gradient(135deg, #10b981 0%, #059669 100%){% else %}linear-gradient(135deg, #f59e0b 0%, #d97706 100%){% endif %}; color: white; padding: 6px 12px; border-radius: 15px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 8px {% if report.report_status == 'resolved' %}rgba(16, 185, 129, 0.3){% else %}rgba(245, 158, 11, 0.3){% endif %};">
+                            {% if report.report_status == 'resolved' %}✅ {{ report.report_status|title }}{% else %}⏳ {{ report.report_status|title }}{% endif %}
+                          </span>
+                        </div>
+                        
+                        {% if report.report_status != 'resolved' %}
+                        <button onclick="markAsResolved({{ report.id }})" 
+                                style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; padding: 10px 20px; border-radius: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 13px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); display: flex; align-items: center; gap: 6px;"
+                                onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(16, 185, 129, 0.4)'"
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(16, 185, 129, 0.3)'">
+                          <span style="font-size: 14px;">✅</span>
+                          Mark as Found
+                        </button>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% empty %}
+                <div style="text-align: center; padding: 60px 40px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(220, 38, 38, 0.02) 100%); border-radius: 20px; border: 2px dashed rgba(239, 68, 68, 0.2);">
+                  <div style="margin-bottom: 20px;">
+                    <span style="font-size: 64px; display: block; margin-bottom: 15px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));">🔍</span>
+                  </div>
+                  <h3 style="color: #dc2626; margin: 0 0 10px 0; font-weight: 700; font-size: 20px;">No Lost Pet Reports</h3>
+                  <p style="color: #7f1d1d; margin: 0; font-size: 16px; line-height: 1.5;">You haven't reported any lost pets yet.<br>We hope all your furry friends are safe at home! 🏠</p>
+                  <div style="margin-top: 20px;">
+                    <button onclick="showUserSection('reportlost')" 
+                            style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; border: none; padding: 12px 24px; border-radius: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);"
+                            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(239, 68, 68, 0.4)'"
+                            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 15px rgba(239, 68, 68, 0.3)'">
+                      Report a Lost Pet
+                    </button>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+
+            <!-- Rescue Requests Tab -->
+            <div id="rescue-requests-tab" class="request-tab-content" style="display: none;">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 20px;">
+                <span style="font-size: 24px;">🆘</span>
+                <h5 style="color: #10b981; margin: 0; font-weight: 600;">Your Rescue Reports</h5>
+              </div>
+              <ul style="list-style: none; padding: 0;">
+                {% for report in user_rescue_reports %}
+                <li class="report-item rescue-report">
+                  <div style="display: flex; justify-content: between; align-items: flex-start; gap: 15px;">
+                    <div style="flex: 1;">
+                      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                        <span style="font-size: 18px;">🆘</span>
+                        <strong style="color: #10b981; font-size: 18px;">{{ report.pet.name }}</strong> 
+                        <span style="color: #6b7280;">({{ report.pet.breed }})</span>
+                      </div>
+                      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
+                        <span><strong>Type:</strong> {{ report.pet.type }}</span>
+                        <span><strong>Color:</strong> {{ report.pet.colour }}</span>
+                        <span><strong>Location:</strong> {{ report.pet.location }}</span>
+                        <span><strong>Status:</strong> 
+                          <span style="padding: 2px 8px; border-radius: 12px; background: rgba(16, 185, 129, 0.1); color: #10b981; font-size: 12px;">
+                            {{ report.status|title }}
+                          </span>
+                        </span>
+                      </div>
+                      <div style="background: rgba(16, 185, 129, 0.05); padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+                        <strong>Description:</strong> {{ report.description }}
+                      </div>
+                      <div style="display: flex; gap: 15px; font-size: 14px; color: #6b7280;">
+                        <span><strong>Report Status:</strong> {{ report.report_status|title }}</span>
+                        <span><strong>Date:</strong> {{ report.created_at|date:"M d, Y" }}</span>
+                      </div>
+                    </div>
+                    <div style="flex-shrink: 0;">
+                      {% if report.pet.image %}
+                      <img src="{{ report.pet.image.url }}" alt="{{ report.pet.name }}"
+                           style="width: 100px; height: 100px; object-fit: cover; border-radius: 12px; border: 3px solid #10b981;" />
+                      {% else %}
+                      <div style="width: 100px; height: 100px; background: rgba(16, 185, 129, 0.1); border: 2px dashed #10b981; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #10b981; font-size: 12px; text-align: center;">
+                        No Image
+                      </div>
+                      {% endif %}
+                    </div>
+                  </div>
+                  {% if report.report_status != 'resolved' %}
+                  <div style="margin-top: 15px; text-align: right;">
+                    <button onclick="markAsResolved({{ report.id }})" 
+                            style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                      🎯 Mark as Rescued/Resolved
+                    </button>
+                  </div>
+                  {% endif %}
+                </li>
+                {% empty %}
+                <li style="text-align: center; color: #6b7280; padding: 40px; background: rgba(16, 185, 129, 0.05); border-radius: 12px;">
+                  <span style="font-size: 48px; display: block; margin-bottom: 10px;">🆘</span>
+                  <strong>No rescue reports found.</strong>
+                  <p style="margin: 8px 0 0 0; font-size: 14px;">You haven't submitted any rescue reports yet.</p>
+                </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          <div class="card" id="section-profile" style="display: none">
+            <h4 style="color: #2d7a2d; text-align: center; margin-bottom: 24px">
+              Edit Profile
+            </h4>
+            <form
+              method="post"
+              action="{% url 'update_profile' %}"
+              enctype="multipart/form-data"
+              style="
+                max-width: 500px;
+                margin: 0 auto;
+                background: #eafbe7;
+                border-radius: 10px;
+                box-shadow: 0 2px 8px #c6e5c6;
+                padding: 28px;
+              "
+            >
+              {% csrf_token %}
+              <div style="text-align: center; margin-bottom: 20px;">
+                {% if user.profile_picture %}
+                  <img src="{{ user.profile_picture.url }}" alt="Current Profile Picture" 
+                       style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid #2d7a2d;">
+                {% else %}
+                  <div style="width: 100px; height: 100px; border-radius: 50%; background: #2d7a2d; color: white; display: flex; align-items: center; justify-content: center; margin: 0 auto; font-size: 36px; font-weight: bold;">
+                    {{ user.username|first|upper }}
+                  </div>
+                {% endif %}
+              </div>
+              
+              <div style="margin-bottom: 18px">
+                <label for="profile_picture" style="font-weight: 600; color: #256625">Profile Picture</label>
+                <input type="file" id="profile_picture" name="profile_picture" accept="image/*"
+                       style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #c6e5c6; margin-top: 6px;" />
+              </div>
+              
+              <div style="margin-bottom: 18px">
+                <label for="first_name" style="font-weight: 600; color: #256625">First Name</label>
+                <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}"
+                       style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #c6e5c6; margin-top: 6px;" />
+              </div>
+              
+              <div style="margin-bottom: 18px">
+                <label for="last_name" style="font-weight: 600; color: #256625">Last Name</label>
+                <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}"
+                       style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #c6e5c6; margin-top: 6px;" />
+              </div>
+              
+              <div style="margin-bottom: 18px">
+                <label for="email" style="font-weight: 600; color: #256625">Email</label>
+                <input type="email" id="email" name="email" value="{{ user.email }}"
+                       style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #c6e5c6; margin-top: 6px;" />
+              </div>
+              
+              <div style="margin-bottom: 18px">
+                <label for="phone_no" style="font-weight: 600; color: #256625">Phone Number</label>
+                <input type="text" id="phone_no" name="phone_no" value="{{ user.phone_no }}"
+                       style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #c6e5c6; margin-top: 6px;" />
+              </div>
+              
+              <div style="margin-bottom: 18px">
+                <label for="address" style="font-weight: 600; color: #256625">Address</label>
+                <textarea id="address" name="address" rows="3"
+                          style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #c6e5c6; margin-top: 6px; resize: vertical;">{{ user.address }}</textarea>
+              </div>
+              
+              <div style="display: flex; gap: 10px; margin-bottom: 18px;">
+                <div style="flex: 1;">
+                  <label for="city" style="font-weight: 600; color: #256625">City</label>
+                  <input type="text" id="city" name="city" value="{{ user.city }}"
+                         style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #c6e5c6; margin-top: 6px;" />
+                </div>
+                <div style="flex: 1;">
+                  <label for="state" style="font-weight: 600; color: #256625">State</label>
+                  <input type="text" id="state" name="state" value="{{ user.state }}"
+                         style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #c6e5c6; margin-top: 6px;" />
+                </div>
+              </div>
+              
+              <div style="display: flex; gap: 10px; margin-bottom: 18px;">
+                <div style="flex: 1;">
+                  <label for="pincode" style="font-weight: 600; color: #256625">Pincode</label>
+                  <input type="text" id="pincode" name="pincode" value="{{ user.pincode }}"
+                         style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #c6e5c6; margin-top: 6px;" />
+                </div>
+                <div style="flex: 1;">
+                  <label for="gender" style="font-weight: 600; color: #256625">Gender</label>
+                  <select id="gender" name="gender"
+                          style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #c6e5c6; margin-top: 6px;">
+                    <option value="">Select Gender</option>
+                    <option value="Male" {% if user.gender == 'Male' %}selected{% endif %}>Male</option>
+                    <option value="Female" {% if user.gender == 'Female' %}selected{% endif %}>Female</option>
+                    <option value="Other" {% if user.gender == 'Other' %}selected{% endif %}>Other</option>
+                  </select>
+                </div>
+              </div>
+              
+              <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 17px; padding: 16px;">
+                Update Profile
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <script>
+        function showUserSection(section) {
+          // Hide all sections
+          const sections = ['available', 'reportlost', 'submitrescue', 'yourrequests', 'lostreports', 'profile'];
+          sections.forEach(sec => {
+            const element = document.getElementById(`section-${sec}`);
+            if (element) {
+              element.style.display = sec === section ? "" : "none";
+            }
+          });
+          
+          // Remove active class from all navigation links
+          const links = ['link-available', 'link-reportlost', 'link-submitrescue', 'link-yourrequests', 'link-lostreports', 'link-profile'];
+          links.forEach(linkId => {
+            const linkElement = document.getElementById(linkId);
+            if (linkElement) {
+              linkElement.classList.remove('active');
+            }
+          });
+          
+          // Add active class to current section link
+          const currentLink = document.getElementById(`link-${section}`);
+          if (currentLink) {
+            currentLink.classList.add('active');
+          }
+            
+          // If showing your requests, default to lost tab
+          if (section === "yourrequests") {
+            showRequestTab('lost');
+          }
+        }
+        
+        // Initialize the page - show available pets by default
+        document.addEventListener('DOMContentLoaded', function() {
+          showUserSection('available');
+        });
+
+        function showRequestTab(tabType) {
+          // Hide all tabs
+          document.getElementById("lost-requests-tab").style.display = "none";
+          document.getElementById("rescue-requests-tab").style.display = "none";
+          
+          // Show selected tab
+          document.getElementById(tabType + "-requests-tab").style.display = "block";
+          
+          // Update tab buttons - remove active class from all
+          document.getElementById("tab-lost").classList.remove("active");
+          document.getElementById("tab-rescue").classList.remove("active");
+          
+          // Add active class to current tab
+          document.getElementById("tab-" + tabType).classList.add("active");
+          
+          // Add smooth transition effect
+          const activeTab = document.getElementById(tabType + "-requests-tab");
+          if (activeTab) {
+            activeTab.style.opacity = '0';
+            activeTab.style.transform = 'translateY(10px)';
+            setTimeout(() => {
+              activeTab.style.transition = 'all 0.3s ease';
+              activeTab.style.opacity = '1';
+              activeTab.style.transform = 'translateY(0)';
+            }, 50);
+          }
+        }
+
+        function markAsResolved(reportId) {
+          if (confirm('Are you sure this pet has been found?')) {
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+            fetch(`/api/pet-reports/${reportId}/`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                },
+                body: JSON.stringify({
+                    report_status: 'resolved'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.report_status === 'resolved') {
+                    alert('🎉 Great news! The pet has been marked as found!');
+                    location.reload();
+                } else {
+                    alert('Error updating status. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating status. Please try again.');
+            });
+          }
+        }
+
+        // Function to contact the pet owner
+        function contactOwner(ownerUsername, petName) {
+            alert(`🤝 To help find ${petName}, please contact the owner: ${ownerUsername}\n\nYou can reach out through their profile or use the contact information shown on the report card.`);
+        }
+
+        // Function to report a pet sighting
+        function reportSighting(reportId) {
+            const location = prompt('👁️ Where did you see this pet? Please provide the location:');
+            if (location && location.trim()) {
+                alert(`Thank you for reporting a sighting! 🙏\n\nLocation: ${location}\n\nThe pet owner will be notified about this sighting. You can also contact them directly using the information on the report card.`);
+                // In a real implementation, this would send the sighting report to the owner
+                console.log(`Sighting reported for pet report ${reportId} at location: ${location}`);
+            }
+        }
+      </script>
+      {% endif %}
+    </div>
+  </body>
+</html>

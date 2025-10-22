@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Filter Adoption Requests - Pet Rescue Admin</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { background: #28a745; color: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
+        .filter-card { background: #fff; border-radius: 8px; padding: 20px; margin: 15px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .adoption-card { background: #fff; border-radius: 8px; padding: 20px; margin: 15px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-left: 4px solid #007bff; }
+        .form-group { margin-bottom: 15px; display: inline-block; margin-right: 20px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group select { padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .btn { background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; text-decoration: none; display: inline-block; }
+        .btn:hover { background: #218838; }
+        .btn-danger { background: #dc3545; }
+        .btn-danger:hover { background: #c82333; }
+        .btn-primary { background: #007bff; }
+        .btn-primary:hover { background: #0056b3; }
+        .status-pending { color: #ffc107; font-weight: bold; }
+        .status-approved { color: #28a745; font-weight: bold; }
+        .status-rejected { color: #dc3545; font-weight: bold; }
+        .status-cancelled { color: #6c757d; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Include Admin Navigation -->
+        {% include 'api/admin_navigation.html' %}
+
+        <div class="header">
+            <h1>Filter Adoption Requests</h1>
+            <p>Admin Panel - Manage and filter adoption requests by status</p>
+        </div>
+        
+        <div class="filter-card">
+            <h3>Filter Options</h3>
+            <form method="GET">
+                <div class="form-group">
+                    <label>Filter by Status:</label>
+                    <select name="status">
+                        <option value="">All Status</option>
+                        <option value="pending" {% if status == 'pending' %}selected{% endif %}>Pending</option>
+                        <option value="approved" {% if status == 'approved' %}selected{% endif %}>Approved</option>
+                        <option value="rejected" {% if status == 'rejected' %}selected{% endif %}>Rejected</option>
+                        <option value="cancelled" {% if status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Apply Filter</button>
+                <a href="{% url 'filter_adoption_requests' %}" class="btn">Clear Filter</a>
+            </form>
+        </div>
+
+        <div class="filter-card">
+            <h3>Adoption Requests
+                {% if status %}
+                    <span style="color: #007bff;">(Status: {{ status|title }})</span>
+                {% else %}
+                    <span style="color: #6c757d;">(All)</span>
+                {% endif %}
+            </h3>
+            
+            {% for adoption in adoptions %}
+            <div class="adoption-card">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <div style="flex: 1;">
+                        <h4>{{ adoption.pet.name }}</h4>
+                        <p><strong>Pet Breed:</strong> {{ adoption.pet.breed }}</p>
+                        <p><strong>Pet Type:</strong> {{ adoption.pet.type }}</p>
+                        <p><strong>Pet Location:</strong> {{ adoption.pet.location }}</p>
+                        <p><strong>Requested by:</strong> {{ adoption.user.username }} ({{ adoption.user.first_name }} {{ adoption.user.last_name }})</p>
+                        <p><strong>User Email:</strong> {{ adoption.user.email }}</p>
+                        <p><strong>User Phone:</strong> {{ adoption.user.phone_no }}</p>
+                        <p><strong>Status:</strong> 
+                            <span class="status-{{ adoption.status }}">{{ adoption.status|title }}</span>
+                        </p>
+                        <p><strong>Request Date:</strong> {{ adoption.created_at|date:"M d, Y H:i" }}</p>
+                    </div>
+                    
+                    {% if adoption.pet.image %}
+                    <div style="margin-left: 20px;">
+                        <img src="{{ adoption.pet.image.url }}" alt="{{ adoption.pet.name }}" 
+                             style="max-width: 150px; max-height: 150px; border-radius: 8px; object-fit: cover;">
+                    </div>
+                    {% endif %}
+                </div>
+                
+                {% if adoption.status == 'pending' %}
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+                    <a href="{% url 'admin_approve_adoption' adoption.id %}" class="btn">
+                        ✓ Approve Adoption
+                    </a>
+                    <a href="{% url 'admin_reject_adoption' adoption.id %}" class="btn btn-danger">
+                        ✗ Reject Adoption
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            {% empty %}
+            <div class="adoption-card">
+                <p style="text-align: center; color: #6c757d; font-style: italic;">
+                    {% if status %}
+                        No adoption requests found with status "{{ status }}".
+                    {% else %}
+                        No adoption requests found.
+                    {% endif %}
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="{% url 'dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>

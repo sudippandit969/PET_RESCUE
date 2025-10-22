@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>User Management - Pet Rescue Admin</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background: #f8f9fa;
+      }
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .header {
+        background: #28a745;
+        color: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+      .user-table {
+        width: 100%;
+        background: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+      .user-table th,
+      .user-table td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid #dee2e6;
+      }
+      .user-table th {
+        background: #f8f9fa;
+        font-weight: bold;
+      }
+      .btn {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 2px;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 12px;
+      }
+      .btn-danger {
+        background: #dc3545;
+      }
+      .btn-success {
+        background: #28a745;
+      }
+      .btn-warning {
+        background: #ffc107;
+        color: #212529;
+      }
+      .status-active {
+        color: #28a745;
+        font-weight: bold;
+      }
+      .status-inactive {
+        color: #dc3545;
+        font-weight: bold;
+      }
+      .role-admin {
+        background: #007bff;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+      }
+      .role-user {
+        background: #6c757d;
+        color: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Include Admin Navigation -->
+      {% include 'api/admin_navigation.html' %}
+
+      <div class="header">
+        <h1>👥 User Management</h1>
+        <p>Manage all users in the Pet Rescue system</p>
+      </div>
+
+      <table class="user-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Date Joined</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+              <span class="role-{{ user.role }}"
+                >{{ user.get_role_display }}</span
+              >
+            </td>
+            <td>
+              <span
+                class="status-{% if user.is_active %}active{% else %}inactive{% endif %}"
+              >
+                {% if user.is_active %}Active{% else %}Inactive{% endif %}
+              </span>
+            </td>
+            <td>{{ user.date_joined|date:"M d, Y" }}</td>
+            <td>
+              {% if user.is_active %}
+              <a
+                href="{% url 'toggle_user_status' user.id %}"
+                class="btn btn-warning"
+                >Deactivate</a
+              >
+              {% else %}
+              <a
+                href="{% url 'toggle_user_status' user.id %}"
+                class="btn btn-success"
+                >Activate</a
+              >
+              {% endif %} {% if user.role == 'user' %}
+              <button
+                class="btn btn-success"
+                onclick="changeRole({{ user.id }}, 'admin')"
+              >
+                Make Admin
+              </button>
+              {% elif user.role == 'admin' and user.id != request.user.id %}
+              <button
+                class="btn btn-warning"
+                onclick="changeRole({{ user.id }}, 'user')"
+              >
+                Remove Admin
+              </button>
+              {% endif %}
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td
+              colspan="7"
+              style="text-align: center; padding: 40px; color: #6c757d"
+            >
+              No users found in the system.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <div
+        style="
+          background: #fff;
+          padding: 20px;
+          margin-top: 20px;
+          border-radius: 8px;
+        "
+      >
+        <h4>User Statistics</h4>
+        <p><strong>Total Users:</strong> {{ users|length }}</p>
+        <p><strong>Active Users:</strong> {{ users|length }}</p>
+        <p>
+          <strong>Admin Users:</strong> {% for user in users %}{% if user.role
+          == 'admin' %}{{ forloop.counter0|add:1 }}{% endif %}{% endfor %}
+        </p>
+      </div>
+    </div>
+
+    <script>
+      function changeRole(userId, newRole) {
+        if (
+          confirm(
+            `Are you sure you want to change this user's role to ${newRole}?`
+          )
+        ) {
+          // In a real implementation, this would make an AJAX call to change the role
+          fetch(`/api/admin/change_role/${userId}/`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": document.querySelector(
+                "[name=csrfmiddlewaretoken]"
+              ).value,
+            },
+            body: JSON.stringify({ role: newRole }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              alert(data.message);
+              location.reload();
+            })
+            .catch((error) => {
+              alert("Error changing user role");
+            });
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,141 @@
+<!-- Admin Navigation Component -->
+<div
+  style="
+    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
+  "
+>
+  <h2
+    style="color: white; margin: 0 0 20px 0; font-size: 24px; font-weight: 700"
+  >
+    🛠️ Admin Control Panel
+  </h2>
+  <div style="display: flex; flex-wrap: wrap; gap: 12px">
+    <a
+      href="{% url 'admin_dashboard_stats' %}"
+      class="nav-btn {% if request.resolver_match.url_name == 'admin_dashboard_stats' %}active{% endif %}"
+      style="background: {% if request.resolver_match.url_name == 'admin_dashboard_stats' %}rgba(255,255,255,0.4){% else %}rgba(255,255,255,0.2){% endif %}; color: white; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-weight: {% if request.resolver_match.url_name == 'admin_dashboard_stats' %}700{% else %}600{% endif %}; transition: all 0.3s ease; border: {% if request.resolver_match.url_name == 'admin_dashboard_stats' %}2px solid white{% else %}1px solid rgba(255,255,255,0.3){% endif %};"
+      onmouseover="this.style.background='rgba(255,255,255,0.3)'"
+      onmouseout="this.style.background='{% if request.resolver_match.url_name == 'admin_dashboard_stats' %}rgba(255,255,255,0.4){% else %}rgba(255,255,255,0.2){% endif %}'"
+    >
+      📊 Dashboard Stats
+    </a>
+
+    <a
+      href="{% url 'admin_user_management' %}"
+      class="nav-btn {% if request.resolver_match.url_name == 'admin_user_management' %}active{% endif %}"
+      style="background: {% if request.resolver_match.url_name == 'admin_user_management' %}rgba(255,255,255,0.4){% else %}rgba(255,255,255,0.2){% endif %}; color: white; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-weight: {% if request.resolver_match.url_name == 'admin_user_management' %}700{% else %}600{% endif %}; transition: all 0.3s ease; border: {% if request.resolver_match.url_name == 'admin_user_management' %}2px solid white{% else %}1px solid rgba(255,255,255,0.3){% endif %};"
+      onmouseover="this.style.background='rgba(255,255,255,0.3)'"
+      onmouseout="this.style.background='{% if request.resolver_match.url_name == 'admin_user_management' %}rgba(255,255,255,0.4){% else %}rgba(255,255,255,0.2){% endif %}'"
+    >
+      👥 User Management
+    </a>
+
+    <a
+      href="{% url 'admin_pet_management' %}"
+      class="nav-btn {% if request.resolver_match.url_name == 'admin_pet_management' %}active{% endif %}"
+      style="background: {% if request.resolver_match.url_name == 'admin_pet_management' %}rgba(255,255,255,0.4){% else %}rgba(255,255,255,0.2){% endif %}; color: white; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-weight: {% if request.resolver_match.url_name == 'admin_pet_management' %}700{% else %}600{% endif %}; transition: all 0.3s ease; border: {% if request.resolver_match.url_name == 'admin_pet_management' %}2px solid white{% else %}1px solid rgba(255,255,255,0.3){% endif %};"
+      onmouseover="this.style.background='rgba(255,255,255,0.3)'"
+      onmouseout="this.style.background='{% if request.resolver_match.url_name == 'admin_pet_management' %}rgba(255,255,255,0.4){% else %}rgba(255,255,255,0.2){% endif %}'"
+    >
+      🐾 Pet Management
+    </a>
+
+    <a
+      href="{% url 'filter_adoption_requests' %}"
+      class="nav-btn {% if request.resolver_match.url_name == 'filter_adoption_requests' %}active{% endif %}"
+      style="background: {% if request.resolver_match.url_name == 'filter_adoption_requests' %}rgba(255,255,255,0.4){% else %}rgba(255,255,255,0.2){% endif %}; color: white; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-weight: {% if request.resolver_match.url_name == 'filter_adoption_requests' %}700{% else %}600{% endif %}; transition: all 0.3s ease; border: {% if request.resolver_match.url_name == 'filter_adoption_requests' %}2px solid white{% else %}1px solid rgba(255,255,255,0.3){% endif %};"
+      onmouseover="this.style.background='rgba(255,255,255,0.3)'"
+      onmouseout="this.style.background='{% if request.resolver_match.url_name == 'filter_adoption_requests' %}rgba(255,255,255,0.4){% else %}rgba(255,255,255,0.2){% endif %}'"
+    >
+      🏠 Adoption Requests
+    </a>
+
+    <a
+      href="{% url 'search_pets' %}"
+      class="nav-btn {% if request.resolver_match.url_name == 'search_pets' %}active{% endif %}"
+      style="background: {% if request.resolver_match.url_name == 'search_pets' %}rgba(255,255,255,0.4){% else %}rgba(255,255,255,0.2){% endif %}; color: white; text-decoration: none; padding: 12px 20px; border-radius: 8px; font-weight: {% if request.resolver_match.url_name == 'search_pets' %}700{% else %}600{% endif %}; transition: all 0.3s ease; border: {% if request.resolver_match.url_name == 'search_pets' %}2px solid white{% else %}1px solid rgba(255,255,255,0.3){% endif %};"
+      onmouseover="this.style.background='rgba(255,255,255,0.3)'"
+      onmouseout="this.style.background='{% if request.resolver_match.url_name == 'search_pets' %}rgba(255,255,255,0.4){% else %}rgba(255,255,255,0.2){% endif %}'"
+    >
+      🔍 Search & Filter
+    </a>
+
+    <!-- Bulk Actions -->
+    <div
+      style="
+        border-left: 2px solid rgba(255, 255, 255, 0.3);
+        padding-left: 12px;
+        margin-left: 8px;
+      "
+    >
+      <span
+        style="
+          color: rgba(255, 255, 255, 0.8);
+          font-size: 12px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+        "
+        >Bulk Actions</span
+      >
+      <div style="display: flex; gap: 8px; margin-top: 8px">
+        <a
+          href="{% url 'admin_bulk_approve_reports' %}"
+          style="
+            background: rgba(34, 197, 94, 0.3);
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+          "
+          onmouseover="this.style.background='rgba(34, 197, 94, 0.4)'"
+          onmouseout="this.style.background='rgba(34, 197, 94, 0.3)'"
+        >
+          ✅ Approve Reports
+        </a>
+        <a
+          href="{% url 'admin_bulk_approve_adoptions' %}"
+          style="
+            background: rgba(34, 197, 94, 0.3);
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+          "
+          onmouseover="this.style.background='rgba(34, 197, 94, 0.4)'"
+          onmouseout="this.style.background='rgba(34, 197, 94, 0.3)'"
+        >
+          ✅ Approve Adoptions
+        </a>
+      </div>
+    </div>
+
+    <a
+      href="{% url 'dashboard' %}"
+      class="nav-btn"
+      style="
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        text-decoration: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        margin-left: auto;
+      "
+      onmouseover="this.style.background='rgba(255,255,255,0.3)'"
+      onmouseout="this.style.background='rgba(255,255,255,0.2)'"
+    >
+      🏠 Back to Dashboard
+    </a>
+  </div>
+</div>
