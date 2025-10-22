@@ -1,3 +1,4 @@
+
 # 🐾 Pet Rescue Application
 
 A comprehensive full-stack web application for reporting lost/found pets and facilitating pet adoptions. Built with Django REST Framework backend and React frontend.
@@ -250,3 +251,6 @@ This project is open source and available under the MIT License.
 ---
 
 **Made with ❤️ for Pet Lovers**
+=======
+# Pet-Adoption-and-Rescue-Management-Portal_September_2025
+>>>>>>> 2af7421ba9e27943e6e8c6c580e8d249132bc314
