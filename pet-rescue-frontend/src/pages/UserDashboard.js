@@ -10,7 +10,8 @@ import BibiChatbot from "../components/BibiChatbot";
 const getImageUrl = (imagePath) => {
   if (!imagePath) return "/default-pet.png";
   if (imagePath.startsWith("http")) return imagePath;
-  return `http://localhost:8000${imagePath}`;
+  const backendBase = process.env.REACT_APP_API_URL || "http://localhost:8000";
+  return `${backendBase}${imagePath}`;
 };
 
 const UserDashboard = () => {
@@ -172,7 +173,8 @@ const UserDashboard = () => {
       formDataObj.append("message", message);
       if (file) formDataObj.append("image", file);
 
-      const res = await fetch(`http://localhost:8000/api/feedbacks/`, {
+      const backendBase = process.env.REACT_APP_API_URL || "http://localhost:8000";
+      const res = await fetch(`${backendBase}/api/feedbacks/`, {
         method: "POST",
         body: formDataObj,
       });

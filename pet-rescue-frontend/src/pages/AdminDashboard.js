@@ -7,7 +7,8 @@ import { useNavigate } from "react-router-dom";
 const getImageUrl = (imagePath) => {
   if (!imagePath) return "/default-pet.png";
   if (imagePath.startsWith("http")) return imagePath;
-  return `http://localhost:8000${imagePath}`;
+  const backendBase = process.env.REACT_APP_API_URL || "http://localhost:8000";
+  return `${backendBase}${imagePath}`;
 };
 
 // Helper function to get default images based on pet type
@@ -190,7 +191,7 @@ const AdminDashboard = () => {
   // Fetch feedback
   const fetchFeedbacks = async () => {
     try {
-      const API_BASE = "http://localhost:8000";
+      const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
       const url = `${API_BASE}/api/feedbacks/`;
 
       const response = await fetch(url, {
@@ -228,7 +229,7 @@ const AdminDashboard = () => {
     }
 
     try {
-      const API_BASE = "http://localhost:8000";
+      const API_BASE = process.env.REACT_APP_API_URL || "http://localhost:8000";
       const url = `${API_BASE}/api/feedbacks/`;
 
       const formData = new FormData();

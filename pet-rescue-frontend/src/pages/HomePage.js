@@ -1,7 +1,7 @@
-﻿import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import BibiChatbot from "../components/BibiChatbot";
-const API_BASE = "http://localhost:8000/api";
+const API_BASE = process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/api` : "http://localhost:8000/api";
 
 const IMPACT_METRICS = [
   { value: "45K+", label: "Pets Reunited", icon: "home" },
@@ -30,7 +30,7 @@ function HomePage() {
     setLoading(true);
     try {
       // ⚠️ REPLACE '/api/feedback' WITH YOUR ACTUAL API URL ⚠️
-      const response = await fetch("http://localhost:8000/api/feedbacks/");
+      const response = await fetch(`${API_BASE}/feedbacks/`);
       if (!response.ok) {
         throw new Error("Failed to fetch feedback.");
       }
@@ -69,7 +69,7 @@ function HomePage() {
       formDataObj.append("message", message);
       if (file) formDataObj.append("image", file);
 
-      const res = await fetch(`http://localhost:8000/api/feedbacks/`, {
+      const res = await fetch(`${API_BASE}/feedbacks/`, {
         method: "POST",
         body: formDataObj,
       });
